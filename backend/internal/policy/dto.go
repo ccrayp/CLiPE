@@ -1,9 +1,9 @@
 package policy
 
 type PolicyDTO struct {
-	ID     uint   `json:"id"`
-	Name   string `json:"name"`
-	Status bool   `json:"status"`
+	ID         uint   `json:"id"`
+	PolicyName string `json:"policy_name"`
+	Status     bool   `json:"status"`
 
 	UserID    *uint `json:"user_id,omitempty"`
 	HostID    *uint `json:"host_id,omitempty"`
@@ -13,8 +13,8 @@ type PolicyDTO struct {
 }
 
 type CreatePolicyDTO struct {
-	Name   string `json:"name"`
-	Status bool   `json:"status"`
+	PolicyName string `json:"policy_name"`
+	Status     bool   `json:"status"`
 
 	UserID    *uint `json:"user_id"`
 	HostID    *uint `json:"host_id"`
