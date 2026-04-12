@@ -2,8 +2,8 @@ package action
 
 func ToDTO(a Action) ActionDTO {
 	return ActionDTO{
-		ID:   a.ActionID,
-		Name: a.ActionName,
+		ActionID:   a.ActionID,
+		ActionName: a.ActionName,
 	}
 }
 

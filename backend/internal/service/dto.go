@@ -1,10 +1,10 @@
 package service
 
 type ServiceDTO struct {
-	ID   uint   `json:"id"`
-	Name string `json:"name"`
+	ServiceID   uint   `json:"service_id"`
+	ServiceName string `json:"service_name"`
 }
 
 type CreateServiceDTO struct {
-	Name string `json:"name" binding:"required"`
+	ServiceName string `json:"service_name" binding:"required"`
 }

@@ -14,7 +14,7 @@ func NewPolicyRep(db *database.DB) *PolicyRepository {
 	}
 }
 
-func (r *PolicyRepository) Select(policy *CreatePolicyDTO, limit int, offset int) ([]PolicyDTO, error) {
+func (r *PolicyRepository) Select(policy *PolicyDTO, limit int, offset int) ([]PolicyDTO, error) {
 	var policies []Policy
 
 	if err := r.db_.Conn().Limit(limit).Offset(offset).Where(policy).Find(&policies).Error; err != nil {

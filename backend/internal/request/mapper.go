@@ -2,7 +2,7 @@ package request
 
 func ToDTO(r Request) RequestDTO {
 	return RequestDTO{
-		ID:        r.RequestID,
+		RequestID: r.RequestID,
 		UserID:    r.UserID,
 		HostID:    r.HostID,
 		ServiceID: r.ServiceID,

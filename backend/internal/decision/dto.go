@@ -1,7 +1,7 @@
 package decision
 
 type DecisionDTO struct {
-	ID uint `json:"id"`
+	DecisionID uint `json:"decision_id"`
 
 	RequestID uint `json:"request_id"`
 	PolicyID  uint `json:"policy_id"`

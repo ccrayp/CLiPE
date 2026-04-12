@@ -2,8 +2,8 @@ package host
 
 func ToDTO(h Host) HostDTO {
 	return HostDTO{
-		ID: h.HostID,
-		IP: h.IP,
+		HostID: h.HostID,
+		IP:     h.IP,
 	}
 }
 

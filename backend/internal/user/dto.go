@@ -1,14 +1,14 @@
 package user
 
 type UserDTO struct {
-	ID   uint   `json:"id"`
-	Name string `json:"name"`
-	UID  int    `json:"uid"`
-	GID  *int   `json:"gid,omitempty"`
+	UserID   uint   `json:"user_id"`
+	UserName string `json:"user_name"`
+	UID      int    `json:"uid"`
+	GID      *int   `json:"gid,omitempty"`
 }
 
 type CreateUserDTO struct {
-	Name string `json:"name"`
-	UID  int    `json:"uid" binding:"required"`
-	GID  *int   `json:"gid"`
+	UserName string `json:"user_name"`
+	UID      int    `json:"uid" binding:"required"`
+	GID      *int   `json:"gid"`
 }

@@ -7,8 +7,8 @@ func ToDTO(r Rule) RuleDTO {
 	_ = json.Unmarshal(r.Condition, &condition)
 
 	return RuleDTO{
-		ID:        r.RuleID,
-		Name:      r.RuleName,
+		RuleID:    r.RuleID,
+		RuleName:  r.RuleName,
 		Condition: condition,
 		Effect:    r.Effect,
 	}
@@ -18,7 +18,7 @@ func FromCreateDTO(dto CreateRuleDTO) Rule {
 	condBytes, _ := json.Marshal(dto.Condition)
 
 	return Rule{
-		RuleName:  dto.Name,
+		RuleName:  dto.RuleName,
 		Condition: condBytes,
 		Effect:    dto.Effect,
 	}

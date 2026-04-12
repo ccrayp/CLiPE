@@ -1,8 +1,8 @@
 package host
 
 type HostDTO struct {
-	ID uint   `json:"id"`
-	IP string `json:"ip"`
+	HostID uint   `json:"host_id"`
+	IP     string `json:"ip"`
 }
 
 type CreateHostDTO struct {

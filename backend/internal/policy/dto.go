@@ -1,7 +1,7 @@
 package policy
 
 type PolicyDTO struct {
-	ID         uint   `json:"id"`
+	PolicyID   uint   `json:"policy_id"`
 	PolicyName string `json:"policy_name"`
 	Status     bool   `json:"status"`
 

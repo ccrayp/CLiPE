@@ -2,8 +2,8 @@ package service
 
 func ToDTO(s Service) ServiceDTO {
 	return ServiceDTO{
-		ID:   s.ServiceID,
-		Name: s.ServiceName,
+		ServiceID:   s.ServiceID,
+		ServiceName: s.ServiceName,
 	}
 }
 

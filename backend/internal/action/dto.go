@@ -1,8 +1,8 @@
 package action
 
 type ActionDTO struct {
-	ID   uint   `json:"id"`
-	Name string `json:"name"`
+	ActionID   uint   `json:"action_id"`
+	ActionName string `json:"action_name"`
 }
 
 type CreateActionDTO struct {

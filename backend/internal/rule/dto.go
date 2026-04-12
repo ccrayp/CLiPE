@@ -1,14 +1,14 @@
 package rule
 
 type RuleDTO struct {
-	ID        uint        `json:"id"`
-	Name      string      `json:"name"`
+	RuleID    uint        `json:"rule_id"`
+	RuleName  string      `json:"rule_name"`
 	Condition interface{} `json:"condition"`
 	Effect    bool        `json:"effect"`
 }
 
 type CreateRuleDTO struct {
-	Name      string      `json:"name" binding:"required"`
+	RuleName  string      `json:"rule_name" binding:"required"`
 	Condition interface{} `json:"condition" binding:"required"`
 	Effect    bool        `json:"effect"`
 }

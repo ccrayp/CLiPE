@@ -38,8 +38,14 @@ func (h *PolicyHandler) Filter(ctx *gin.Context) {
 		return
 	}
 
-	var policy CreatePolicyDTO
-	ctx.ShouldBindJSON(&policy)
+	var policy PolicyDTO
+	decoder := json.NewDecoder(ctx.Request.Body)
+	decoder.DisallowUnknownFields()
+
+	if err := decoder.Decode(&policy); err != nil {
+		utils.RespondError(ctx, http.StatusBadRequest, "invalid body", err.Error())
+		return
+	}
 
 	data, err := h.repository_.Select(&policy, limit, offset)
 	if err != nil {
@@ -83,8 +89,10 @@ func (h *PolicyHandler) Update(ctx *gin.Context) {
 	}
 
 	var policy CreatePolicyDTO
-	err = ctx.ShouldBindJSON(&policy)
-	if err != nil {
+	decoder := json.NewDecoder(ctx.Request.Body)
+	decoder.DisallowUnknownFields()
+
+	if err := decoder.Decode(&policy); err != nil {
 		utils.RespondError(ctx, http.StatusBadRequest, "invalid body", err.Error())
 		return
 	}

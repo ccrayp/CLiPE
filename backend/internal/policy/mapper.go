@@ -2,7 +2,7 @@ package policy
 
 func ToDTO(p Policy) PolicyDTO {
 	return PolicyDTO{
-		ID:         p.PolicyID,
+		PolicyID:   p.PolicyID,
 		PolicyName: p.PolicyName,
 		Status:     p.Status,
 

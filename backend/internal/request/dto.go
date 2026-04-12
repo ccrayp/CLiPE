@@ -1,7 +1,7 @@
 package request
 
 type RequestDTO struct {
-	ID uint `json:"id"`
+	RequestID uint `json:"request_id"`
 
 	UserID    uint `json:"user_id"`
 	HostID    uint `json:"host_id"`
