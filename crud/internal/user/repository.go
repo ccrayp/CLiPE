@@ -1,0 +1,61 @@
+package user
+
+import "clipe/pkg/database"
+
+type UserRepository struct {
+	db_ *database.DB
+}
+
+func NewUserRep(db *database.DB) *UserRepository {
+	return &UserRepository{db_: db}
+}
+
+func (r *UserRepository) Select(filter *UserDTO, limit int, offset int) ([]UserDTO, error) {
+
+	var users []User
+
+	if err := r.db_.Conn().
+		Limit(limit).
+		Offset(offset).
+		Where(filter).
+		Find(&users).Error; err != nil {
+		return nil, err
+	}
+
+	var result []UserDTO
+	for _, u := range users {
+		result = append(result, ToDTO(u))
+	}
+
+	return result, nil
+}
+
+func (r *UserRepository) Create(dto *CreateUserDTO) (*uint, error) {
+
+	model := FromCreateDTO(*dto)
+
+	if err := r.db_.Conn().Create(&model).Error; err != nil {
+		return nil, err
+	}
+
+	return &model.UserID, nil
+}
+
+func (r *UserRepository) Update(id uint, dto *CreateUserDTO) error {
+
+	var model User
+
+	if err := r.db_.Conn().First(&model, id).Error; err != nil {
+		return err
+	}
+
+	model.UserName = dto.UserName
+	model.UID = dto.UID
+	model.GID = dto.GID
+
+	return r.db_.Conn().Save(&model).Error
+}
+
+func (r *UserRepository) Delete(id uint) error {
+	return r.db_.Conn().Unscoped().Delete(&User{}, id).Error
+}
