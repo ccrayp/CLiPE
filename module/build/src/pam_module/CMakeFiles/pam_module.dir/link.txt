@@ -1,1 +1,0 @@
-/usr/bin/c++  -arch arm64 -dynamiclib -Wl,-headerpad_max_install_names -o pam_my_module.dylib -install_name @rpath/pam_my_module.dylib CMakeFiles/pam_module.dir/pam_module.cpp.o  ../utils/libutils.a ../client/libclient.a -lpam ../utils/libutils.a
