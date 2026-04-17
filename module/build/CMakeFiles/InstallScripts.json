@@ -1,0 +1,11 @@
+{
+	"InstallScripts" : 
+	[
+		"/Users/roman/projects/CLiPE/module/build/cmake_install.cmake",
+		"/Users/roman/projects/CLiPE/module/build/src/utils/cmake_install.cmake",
+		"/Users/roman/projects/CLiPE/module/build/src/client/cmake_install.cmake",
+		"/Users/roman/projects/CLiPE/module/build/src/pam_module/cmake_install.cmake",
+		"/Users/roman/projects/CLiPE/module/build/tests/cmake_install.cmake"
+	],
+	"Parallel" : false
+}
