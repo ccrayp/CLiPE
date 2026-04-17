@@ -17,7 +17,11 @@ func (r *UserRepository) Select(filter *UserDTO, limit int, offset int) ([]UserD
 	if err := r.db_.Conn().
 		Limit(limit).
 		Offset(offset).
-		Where(filter).
+		Where(&User{
+			UserName: filter.UserName,
+			UID:      filter.UID,
+			GID:      filter.GID,
+		}).
 		Find(&users).Error; err != nil {
 		return nil, err
 	}

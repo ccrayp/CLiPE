@@ -4,7 +4,7 @@ type UserDTO struct {
 	UserID   uint   `json:"user_id"`
 	UserName string `json:"user_name"`
 	UID      int    `json:"uid"`
-	GID      *int   `json:"gid,omitempty"`
+	GID      *int   `json:"gid"`
 }
 
 type CreateUserDTO struct {
