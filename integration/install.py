@@ -32,6 +32,10 @@ MESSAGES = {
         "ru": "Ошибка сети для пользователя {name}: {err}",
         "en": "Network error for user {name}: {err}"
     },
+    "host_id_error": {
+        "ru": "Не удалось получить host_id из ответа",
+        "en": "Failed to get host_id from response"
+    },
     "progress_host": {
         "ru": "Регистрация хоста",
         "en": "Registering host"
@@ -101,14 +105,22 @@ def register_host(base_url, ip):
     if response.status_code != 201:
         raise Exception(f"{response.status_code} {response.text}")
 
+    data = response.json()
 
-def register_user(base_url, user):
+    try:
+        return data["data"]["id"]
+    except KeyError:
+        raise Exception(t("host_id_error"))
+
+
+def register_user(base_url, user, host_id):
     response = requests.post(
         f"{base_url}/users",
         json={
             "user_name": user.pw_name,
             "uid": user.pw_uid,
-            "gid": user.pw_gid
+            "gid": user.pw_gid,
+            "host_id": host_id
         },
         timeout=5
     )
@@ -131,7 +143,7 @@ def main():
     with tqdm(total=1, desc=t("progress_host")) as host_bar:
         try:
             ip = get_ip()
-            register_host(base_url, ip)
+            host_id = register_host(base_url, ip)
         except Exception as e:
             logging.error(t("host_error", err=e))
             return
@@ -144,7 +156,7 @@ def main():
     with tqdm(total=len(real_users), desc=t("progress_users")) as user_bar:
         for user in real_users:
             try:
-                register_user(base_url, user)
+                register_user(base_url, user, host_id)
             except requests.exceptions.RequestException as e:
                 logging.error(t("network_error", name=user.pw_name, err=e))
             finally:

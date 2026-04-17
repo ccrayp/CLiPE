@@ -19,16 +19,17 @@ CREATE TABLE actions (
 	action_name VARCHAR(50) NOT NULL UNIQUE
 );
 
+CREATE TABLE hosts (
+	host_id SERIAL PRIMARY KEY,
+	ip VARCHAR(15) NOT NULL UNIQUE
+);
+
 CREATE TABLE users (
 	user_id SERIAL PRIMARY KEY,
 	user_name VARCHAR(100) NOT NULL UNIQUE, 
 	uid INT NOT NULL,
 	gid INT
-);
-
-CREATE TABLE hosts (
-	host_id SERIAL PRIMARY KEY,
-	ip VARCHAR(15) NOT NULL UNIQUE
+	host_id INT NOT NULL REFERENCES hosts(host_id) ON DELETE CASCADE
 );
 
 CREATE TABLE services (

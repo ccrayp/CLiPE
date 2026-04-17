@@ -6,6 +6,7 @@ func ToDTO(u User) UserDTO {
 		UserName: u.UserName,
 		UID:      u.UID,
 		GID:      u.GID,
+		HostId:   u.HostId,
 	}
 }
 
@@ -14,5 +15,6 @@ func FromCreateDTO(dto CreateUserDTO) User {
 		UserName: dto.UserName,
 		UID:      dto.UID,
 		GID:      dto.GID,
+		HostId:   dto.HostId,
 	}
 }

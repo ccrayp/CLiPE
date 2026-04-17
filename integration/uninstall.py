@@ -142,20 +142,6 @@ def main():
 
     base_url = base_url.rstrip("/")
 
-    with tqdm(total=1, desc="Removing host") as host_bar:
-        try:
-            ip = get_ip()
-            hosts = find_host(base_url, ip)
-
-            for host in hosts:
-                delete_host(base_url, host["host_id"])
-
-        except Exception as e:
-            logging.error(t("host_remove_error", err=e))
-
-        finally:
-            host_bar.update(1)
-
     users = pwd.getpwall()
     real_users = [u for u in users if is_real_user(u)]
 
@@ -172,6 +158,20 @@ def main():
 
             finally:
                 user_bar.update(1)
+
+    with tqdm(total=1, desc="Removing host") as host_bar:
+        try:
+            ip = get_ip()
+            hosts = find_host(base_url, ip)
+
+            for host in hosts:
+                delete_host(base_url, host["host_id"])
+
+        except Exception as e:
+            logging.error(t("host_remove_error", err=e))
+
+        finally:
+            host_bar.update(1)
 
 
 if __name__ == "__main__":

@@ -18,9 +18,11 @@ func (r *UserRepository) Select(filter *UserDTO, limit int, offset int) ([]UserD
 		Limit(limit).
 		Offset(offset).
 		Where(&User{
+			UserID:   filter.UserID,
 			UserName: filter.UserName,
 			UID:      filter.UID,
 			GID:      filter.GID,
+			HostId:   filter.HostId,
 		}).
 		Find(&users).Error; err != nil {
 		return nil, err
@@ -56,6 +58,7 @@ func (r *UserRepository) Update(id uint, dto *CreateUserDTO) error {
 	model.UserName = dto.UserName
 	model.UID = dto.UID
 	model.GID = dto.GID
+	model.HostId = dto.HostId
 
 	return r.db_.Conn().Save(&model).Error
 }
