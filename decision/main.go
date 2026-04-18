@@ -22,12 +22,12 @@ func main() {
 
 	client := client.NewClient(cfg)
 
-	InitRoutes(api, client, cfg.Server.ApiVersion)
+	InitRoutes(api, client, cfg.Server.ApiVersion, cfg.DefaultDecision)
 
 	server.Run(":8080")
 }
 
-func InitRoutes(r *gin.RouterGroup, client *client.Client, apiVersion string) {
+func InitRoutes(r *gin.RouterGroup, client *client.Client, apiVersion string, defaultDecision bool) {
 
 	r.GET("", func(ctx *gin.Context) {
 		now := time.Now().Format("2006-01-02 15:04:05")
@@ -48,7 +48,7 @@ func InitRoutes(r *gin.RouterGroup, client *client.Client, apiVersion string) {
 		})
 	})
 
-	decider := service.NewDecider(client)
+	decider := service.NewDecider(client, defaultDecision)
 	handler := service.NewHandler(decider)
 
 	r.POST("/decide", handler.Decide)

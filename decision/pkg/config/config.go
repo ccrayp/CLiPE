@@ -1,6 +1,9 @@
 package config
 
-import "os"
+import (
+	"os"
+	"strconv"
+)
 
 type Config struct {
 	Server struct {
@@ -11,6 +14,8 @@ type Config struct {
 	CrudApi struct {
 		Port string
 	}
+
+	DefaultDecision bool
 }
 
 func NewConfig() *Config {
@@ -20,6 +25,12 @@ func NewConfig() *Config {
 	cfg.Server.ApiVersion = os.Getenv("API_VERSION")
 
 	cfg.CrudApi.Port = os.Getenv("CRUD_SERVER_PORT")
+
+	defaultDecision, err := strconv.ParseBool(os.Getenv("DEFAULT_DECISION"))
+	if err != nil {
+		defaultDecision = false
+	}
+	cfg.DefaultDecision = defaultDecision
 
 	return cfg
 }

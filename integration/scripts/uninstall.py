@@ -1,5 +1,6 @@
 import pwd
 import socket
+import subprocess
 import requests
 import os
 import logging
@@ -131,16 +132,74 @@ def delete_user(base_url, user_id):
         logging.error(t("user_delete_fail", id=user_id, code=response.status_code))
 
 
+
+CONFIG_DIR = "/etc/clipe"
+
+
+def remove_config():
+    try:
+        if os.path.exists(CONFIG_DIR):
+            # удаляем все файлы внутри
+            for filename in os.listdir(CONFIG_DIR):
+                file_path = os.path.join(CONFIG_DIR, filename)
+                try:
+                    os.remove(file_path)
+                except Exception as e:
+                    logging.error(f"Failed to remove file {file_path}: {e}")
+
+            # удаляем саму директорию
+            os.rmdir(CONFIG_DIR)
+
+    except PermissionError:
+        logging.error("Нет прав на удаление /etc/clipe (запусти с sudo)")
+    except Exception as e:
+        logging.error(f"Ошибка удаления конфига: {e}")
+
+
+def get_pam_dir():
+    # try:
+    #     result = subprocess.check_output(
+    #         ["find", "/usr/lib", "-name", "pam_unix.so"],
+    #         text=True
+    #     )
+
+    #     path = result.strip().split("\n")[0]
+    #     return os.path.dirname(path)
+
+    # except Exception as e:
+    #     raise RuntimeError(f"Failed to find PAM directory: {e}")
+    return "/lib/aarch64-linux-gnu/security/"
+
+
+def uninstall_module():
+    try:
+        pam_dir = get_pam_dir()
+        module_path = os.path.join(pam_dir, "pam_clipe.so")
+
+        if not os.path.exists(module_path):
+            print("Module not found, nothing to remove")
+            return
+
+        os.remove(module_path)
+        print(f"Removed: {module_path}")
+
+    except PermissionError:
+        print("Permission denied (run with sudo)")
+    except Exception as e:
+        print(f"Failed to remove module: {e}")
+
+
 def main():
     setup_logging()
     load_dotenv()
 
-    base_url = os.getenv("CRUD_URL")
+    base_url = os.getenv("URL")
 
     if not base_url:
         raise ValueError(t("env_error"))
 
     base_url = base_url.rstrip("/")
+    base_url = base_url + ":8081/api/v1/internal"
 
     users = pwd.getpwall()
     real_users = [u for u in users if is_real_user(u)]
@@ -172,7 +231,9 @@ def main():
 
         finally:
             host_bar.update(1)
-
+    
+    remove_config()
+    uninstall_module()
 
 if __name__ == "__main__":
     main()

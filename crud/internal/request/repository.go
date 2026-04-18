@@ -1,6 +1,9 @@
 package request
 
-import "clipe/pkg/database"
+import (
+	"clipe/pkg/database"
+	"encoding/json"
+)
 
 type RequestRepository struct {
 	db_ *database.DB
@@ -11,18 +14,33 @@ func NewRequestRep(db *database.DB) *RequestRepository {
 }
 
 func (r *RequestRepository) Select(filter *RequestDTO, limit int, offset int) ([]RequestDTO, error) {
-
 	var requests []Request
 
-	if err := r.db_.Conn().
-		Limit(limit).
-		Offset(offset).
-		Where(filter).
-		Find(&requests).Error; err != nil {
+	query := r.db_.Conn().Limit(limit).Offset(offset)
+
+	if filter != nil {
+		if filter.RequestID != 0 {
+			query = query.Where("request_id = ?", filter.RequestID)
+		}
+		if filter.UserID != nil {
+			query = query.Where("user_id = ?", *filter.UserID)
+		}
+		if filter.HostID != nil {
+			query = query.Where("host_id = ?", *filter.HostID)
+		}
+		if filter.ServiceID != nil {
+			query = query.Where("service_id = ?", *filter.ServiceID)
+		}
+		if filter.ActionID != nil {
+			query = query.Where("action_id = ?", *filter.ActionID)
+		}
+	}
+
+	if err := query.Find(&requests).Error; err != nil {
 		return nil, err
 	}
 
-	var result []RequestDTO
+	result := make([]RequestDTO, 0, len(requests))
 	for _, req := range requests {
 		result = append(result, ToDTO(req))
 	}
@@ -31,7 +49,6 @@ func (r *RequestRepository) Select(filter *RequestDTO, limit int, offset int) ([
 }
 
 func (r *RequestRepository) Create(dto *CreateRequestDTO) (*uint, error) {
-
 	model := FromCreateDTO(*dto)
 
 	if err := r.db_.Conn().Create(&model).Error; err != nil {
@@ -42,7 +59,6 @@ func (r *RequestRepository) Create(dto *CreateRequestDTO) (*uint, error) {
 }
 
 func (r *RequestRepository) Update(id uint, dto *CreateRequestDTO) error {
-
 	var model Request
 
 	if err := r.db_.Conn().First(&model, id).Error; err != nil {
@@ -53,6 +69,14 @@ func (r *RequestRepository) Update(id uint, dto *CreateRequestDTO) error {
 	model.HostID = dto.HostID
 	model.ServiceID = dto.ServiceID
 	model.ActionID = dto.ActionID
+
+	if dto.Context != nil {
+		condBytes, err := json.Marshal(dto.Context)
+		if err != nil {
+			return err
+		}
+		model.Context = condBytes
+	}
 
 	return r.db_.Conn().Save(&model).Error
 }

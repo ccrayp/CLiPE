@@ -10,9 +10,16 @@ func ToDTO(d Decision) DecisionDTO {
 }
 
 func FromCreateDTO(dto CreateDecisionDTO) Decision {
+	clean := func(v *uint) *uint {
+		if v == nil || *v == 0 {
+			return nil
+		}
+		return v
+	}
+
 	return Decision{
 		RequestID: dto.RequestID,
-		PolicyID:  dto.PolicyID,
+		PolicyID:  clean(dto.PolicyID),
 		Result:    dto.Result,
 	}
 }

@@ -18,10 +18,11 @@ type createDecisionDTO struct {
 }
 
 type createRequestDTO struct {
-	UserID    uint `json:"user_id" binding:"required"`
-	HostID    uint `json:"host_id" binding:"required"`
-	ServiceID uint `json:"service_id" binding:"required"`
-	ActionID  uint `json:"action_id" binding:"required"`
+	UserID    uint        `json:"user_id" binding:"required"`
+	HostID    uint        `json:"host_id" binding:"required"`
+	ServiceID uint        `json:"service_id" binding:"required"`
+	ActionID  uint        `json:"action_id" binding:"required"`
+	Context   interface{} `json:"context"`
 }
 
 type Client struct {
@@ -40,12 +41,13 @@ func (c *Client) CheckApiUrl() string {
 	return c.apiUrl
 }
 
-func (c *Client) CreateRequest(userId uint, hostId uint, serviceId uint, actionId uint) (uint, error) {
+func (c *Client) CreateRequest(userId uint, hostId uint, serviceId uint, actionId uint, request *model.ApiRequest) (uint, error) {
 	dto := createRequestDTO{
 		UserID:    userId,
 		HostID:    hostId,
 		ServiceID: serviceId,
 		ActionID:  actionId,
+		Context:   request,
 	}
 
 	var resp struct {
@@ -71,6 +73,55 @@ func (c *Client) CreateDecision(requestId uint, policyId uint, result bool) (uin
 	dto := createDecisionDTO{
 		RequestID: requestId,
 		PolicyID:  policyId,
+		Result:    result,
+	}
+
+	var resp struct {
+		utils.Common
+		Data struct {
+			ID uint `json:"id"`
+		} `json:"data"`
+	}
+
+	err := c.doPost("/decisions", dto, &resp)
+	if err != nil {
+		return 0, err
+	}
+
+	if !resp.Success {
+		return 0, fmt.Errorf("request failed: %+v", resp)
+	}
+
+	return resp.Data.ID, nil
+}
+
+func (c *Client) CreateFallbackRequest(request *model.ApiRequest) (uint, error) {
+	dto := createRequestDTO{
+		Context: request,
+	}
+
+	var resp struct {
+		utils.Common
+		Data struct {
+			ID uint `json:"id"`
+		} `json:"data"`
+	}
+
+	err := c.doPost("/requests", dto, &resp)
+	if err != nil {
+		return 0, err
+	}
+
+	if !resp.Success {
+		return 0, fmt.Errorf("request failed: %+v", resp)
+	}
+
+	return resp.Data.ID, nil
+}
+
+func (c *Client) CreateFallbackDecision(requestId uint, result bool) (uint, error) {
+	dto := createDecisionDTO{
+		RequestID: requestId,
 		Result:    result,
 	}
 

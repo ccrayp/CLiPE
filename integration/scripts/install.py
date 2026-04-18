@@ -1,5 +1,7 @@
 import pwd
+import shutil
 import socket
+import subprocess
 import requests
 import os
 import logging
@@ -16,6 +18,14 @@ def get_lang():
 LANG = get_lang()
 
 MESSAGES = {
+    "need_sudo": {
+        "ru": "Нет прав на запись в /etc/clipe (запусти с sudo)",
+        "en": "Need rules to write into /etc/clipe (run using sudo)"
+    },
+    "config_error": {
+        "ru": "Ошибка записи конфига: {e}",
+        "en": "Error wirting into: {e}"
+    },
     "env_error": {
         "ru": "CRUD_URL не задан",
         "en": "CRUD_URL is not set"
@@ -49,6 +59,23 @@ MESSAGES = {
 
 def t(key, **kwargs):
     return MESSAGES[key][LANG].format(**kwargs)
+
+
+CONFIG_DIR = "/etc/clipe"
+CONFIG_FILE = os.path.join(CONFIG_DIR, "clipe.conf")
+
+def save_config(base_url, ip):
+    try:
+        os.makedirs(CONFIG_DIR, exist_ok=True)
+
+        with open(CONFIG_FILE, "w") as f:
+            f.write(f"URL={base_url}\n")
+            f.write(f"IP={ip}\n")
+
+    except PermissionError:
+        logging.error(t("need_sudo"))
+    except Exception as e:
+        logging.error(t("config_error"))
 
 
 def setup_logging():
@@ -129,21 +156,53 @@ def register_user(base_url, user, host_id):
         logging.error(t("user_error", name=user.pw_name, code=response.status_code))
 
 
+def get_pam_dir():
+    # try:
+    #     result = subprocess.check_output(
+    #         ["find", "/usr/lib", "-name", "pam_unix.so"],
+    #         text=True
+    #     )
+
+    #     path = result.strip().split("\n")[0]
+    #     return os.path.dirname(path)
+
+    # except Exception as e:
+    #     raise RuntimeError(f"Failed to find pam directory: {e}")
+    return "/lib/aarch64-linux-gnu/security/"
+
+
+def install_module():
+    pam_dir = get_pam_dir()
+
+    src = os.path.abspath("pam_clipe.so")
+    dst = os.path.join(pam_dir, "pam_clipe.so")
+
+    if not os.path.exists(src):
+        raise FileNotFoundError(f"Module not found: {src}")
+
+    shutil.copy2(src, dst)
+
+    print(f"Installed to: {dst}")
+    
+
 def main():
     setup_logging()
     load_dotenv()
 
-    base_url = os.getenv("CRUD_URL")
+    base_url = os.getenv("URL")
 
     if not base_url:
         raise ValueError(t("env_error"))
 
     base_url = base_url.rstrip("/")
+    crud_url = base_url + ":8081/api/v1/internal"
 
     with tqdm(total=1, desc=t("progress_host")) as host_bar:
         try:
             ip = get_ip()
-            host_id = register_host(base_url, ip)
+            host_id = register_host(crud_url, ip)
+            save_config(base_url, ip)
+
         except Exception as e:
             logging.error(t("host_error", err=e))
             return
@@ -156,12 +215,13 @@ def main():
     with tqdm(total=len(real_users), desc=t("progress_users")) as user_bar:
         for user in real_users:
             try:
-                register_user(base_url, user, host_id)
+                register_user(crud_url, user, host_id)
             except requests.exceptions.RequestException as e:
                 logging.error(t("network_error", name=user.pw_name, err=e))
             finally:
                 user_bar.update(1)
 
+    install_module()
 
 if __name__ == "__main__":
     main()

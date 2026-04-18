@@ -11,20 +11,29 @@ func NewDecisionRep(db *database.DB) *DecisionRepository {
 }
 
 func (r *DecisionRepository) Select(filter *DecisionDTO, limit int, offset int) ([]DecisionDTO, error) {
-
 	var decisions []Decision
 
-	if err := r.db_.Conn().
-		Preload("Request").
-		Preload("Policy").
+	query := r.db_.Conn().
 		Limit(limit).
-		Offset(offset).
-		Where(filter).
-		Find(&decisions).Error; err != nil {
+		Offset(offset)
+
+	if filter != nil {
+		if filter.DecisionID != 0 {
+			query = query.Where("decision_id = ?", filter.DecisionID)
+		}
+		if filter.RequestID != 0 {
+			query = query.Where("request_id = ?", filter.RequestID)
+		}
+		if filter.PolicyID != nil {
+			query = query.Where("policy_id = ?", *filter.PolicyID)
+		}
+	}
+
+	if err := query.Find(&decisions).Error; err != nil {
 		return nil, err
 	}
 
-	var result []DecisionDTO
+	result := make([]DecisionDTO, 0, len(decisions))
 	for _, d := range decisions {
 		result = append(result, ToDTO(d))
 	}
@@ -33,7 +42,6 @@ func (r *DecisionRepository) Select(filter *DecisionDTO, limit int, offset int) 
 }
 
 func (r *DecisionRepository) Create(dto *CreateDecisionDTO) (*uint, error) {
-
 	model := FromCreateDTO(*dto)
 
 	if err := r.db_.Conn().Create(&model).Error; err != nil {
@@ -44,7 +52,6 @@ func (r *DecisionRepository) Create(dto *CreateDecisionDTO) (*uint, error) {
 }
 
 func (r *DecisionRepository) Update(id uint, dto *CreateDecisionDTO) error {
-
 	var model Decision
 
 	if err := r.db_.Conn().First(&model, id).Error; err != nil {

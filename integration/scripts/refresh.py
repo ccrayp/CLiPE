@@ -145,11 +145,12 @@ def main():
     setup_logging()
     load_dotenv()
 
-    base_url = os.getenv("CRUD_URL")
+    base_url = os.getenv("URL")
     if not base_url:
         raise ValueError(t("env_error"))
 
     base_url = base_url.rstrip("/")
+    base_url = base_url + ":8081/api/v1/internal"
 
     try:
         ip = get_ip()

@@ -21,7 +21,6 @@ func (r *RuleRepository) Select(filter *RuleDTO, limit int, offset int) ([]RuleD
 		Limit(limit).
 		Offset(offset)
 
-	// ⚠️ фильтруем только по простым полям
 	if filter.RuleID != 0 {
 		query = query.Where("rule_id = ?", filter.RuleID)
 	}

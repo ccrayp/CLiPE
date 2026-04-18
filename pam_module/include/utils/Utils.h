@@ -1,3 +1,18 @@
+#pragma once
+
+#include <pwd.h>
+#include <unistd.h>
+#include <grp.h>
+#include <sys/types.h>
+#include <vector>
+#include <string>
+#include <cstring>
+#include <ctime>
+#include <sstream>
+#include <fstream>
+#include <iomanip>
+#include <netdb.h>
+#include <arpa/inet.h>
 #include <vector>
 #include <sys/types.h>
 #include <nlohmann/json.hpp>
@@ -27,27 +42,18 @@ struct Request {
     Time time;
 };
 
-nlohmann::json BuildRequest(const Request& request) {
-    return {
-        {"user", {
-            {"name", request.user.Name},
-            {"uid", request.user.Uid},
-            {"gid", request.user.Gid},
-            {"groups", request.user.Groups}
-        }},
-        {"host", {
-            {"ip", request.host.Ip},
-            {"hostname", request.host.HostName}
-        }},
-        {"service", request.Service},
-        {"action", request.Action},
-        {"time", {
-            {"timestamp", request.time.Timestamp},
-            {"weekday", request.time.Weekday}
-        }}
-    };
-}
+struct Journal {
+    int policy_id;
+    std::string policy_name;
+    int request_id;
+    int decision_id;
+};
 
-std::string GetUrl() {
-    return "http://192.168.0.104/api/v1/decide";
-}
+struct Decision {
+    bool allow;
+    Journal journal;
+};
+
+Request BuildRequest(const std::string& username, const std::string& service, const std::string& action);
+nlohmann::json RequestToJson(const Request& request);
+std::string GetValue(const std::string &key);

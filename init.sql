@@ -57,21 +57,21 @@ CREATE TABLE policies (
 
 CREATE TABLE requests (
 	request_id SERIAL PRIMARY KEY,
-	user_id INT NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
-	host_id INT NOT NULL REFERENCES hosts(host_id) ON DELETE CASCADE,
-	service_id INT NOT NULL REFERENCES services(service_id) ON DELETE CASCADE,
-	action_id INT NOT NULL REFERENCES actions(action_id) ON DELETE CASCADE
+	user_id INT REFERENCES users(user_id) ON DELETE CASCADE,
+	host_id INT REFERENCES hosts(host_id) ON DELETE CASCADE,
+	service_id INT REFERENCES services(service_id) ON DELETE CASCADE,
+	action_id INT REFERENCES actions(action_id) ON DELETE CASCADE,
+	context JSONB NOT NULL DEFAULT '{"data": null}',
+	timestamp TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
 CREATE TABLE decisions (
 	decision_id SERIAL PRIMARY KEY,
 	request_id INT NOT NULL REFERENCES requests(request_id) ON DELETE CASCADE,
-	policy_id INT NOT NULL REFERENCES policies(policy_id) ON DELETE CASCADE,
+	policy_id INT REFERENCES policies(policy_id) ON DELETE CASCADE,
 	result BOOLEAN NOT NULL
 );
 
-
--- Добавление тестовых данных
 
 INSERT INTO actions (action_name) VALUES
 ('read'),

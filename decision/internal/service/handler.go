@@ -4,6 +4,7 @@ import (
 	"decision/internal/model"
 	"decision/pkg/utils"
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -32,6 +33,7 @@ func (h *Handler) Decide(ctx *gin.Context) {
 
 	decision, err := h.decider.Evaluate(&dto)
 	if err != nil {
+		fmt.Println(err.Error())
 		utils.ErrorRespond(ctx, http.StatusInternalServerError, nil, err.Error())
 		return
 	}

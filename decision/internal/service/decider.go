@@ -11,39 +11,65 @@ import (
 )
 
 type Decider struct {
-	client *client.Client
+	client          *client.Client
+	defaultDecision bool
 }
 
-func NewDecider(client *client.Client) *Decider {
+func NewDecider(client *client.Client, defaultDecision bool) *Decider {
 	return &Decider{
-		client: client,
+		client:          client,
+		defaultDecision: defaultDecision,
 	}
+}
+
+func (d *Decider) Fallback(response *model.PolicyMatchResponse, request *model.ApiRequest) (*model.Decision, error) {
+	requestId, err := d.client.CreateFallbackRequest(request)
+	if err != nil {
+		return nil, fmt.Errorf("error in CreateRequest: %s", err.Error())
+	}
+
+	decisionId, err := d.client.CreateFallbackDecision(requestId, false)
+	if err != nil {
+		return nil, fmt.Errorf("error in CreateDecision: %s", err.Error())
+	}
+	return &model.Decision{
+		Result: d.defaultDecision,
+		Policy: struct {
+			Id   uint
+			Name string
+		}{
+			Id:   0,
+			Name: "none",
+		},
+		RequestId:  requestId,
+		DecisionId: decisionId,
+	}, nil
 }
 
 func (d *Decider) Evaluate(request *model.ApiRequest) (*model.Decision, error) {
 	response, err := d.client.GetRule(request)
 	if err != nil {
-		return nil, err
+		return d.Fallback(response, request)
 	}
 
-	requestId, err := d.client.CreateRequest(response.Policy.UserID, response.Policy.HostID, response.Policy.ServiceID, response.Policy.ActionID)
+	requestId, err := d.client.CreateRequest(response.Policy.UserID, response.Policy.HostID, response.Policy.ServiceID, response.Policy.ActionID, request)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error in CreateRequest: %s", err.Error())
 	}
 
 	rule, err := model.ParseRule(response.Rule)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error in ParseRule: %s", err.Error())
 	}
 
 	result, err := d.ApplyRule(request, rule)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error in ApplyRule: %s", err.Error())
 	}
 
 	decisionId, err := d.client.CreateDecision(requestId, response.Policy.ID, result)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error in CreateDecision: %s", err.Error())
 	}
 
 	return &model.Decision{

@@ -3,35 +3,60 @@
 
 #include "logger/Logger.h"
 #include "client/Client.h"
-#include "utils/Utils.h"
-#include "utils/ReturnStatus.h"
 
-extern "C" int pam_sm_acct_mgmt(pam_handle_t *pamh, int flags, int argc, const char **argv) {
+extern "C" int pam_sm_acct_mgmt(pam_handle_t *pamh, int flags, int argc, const char **argv)
+{
+    bool debug = false;
 
-    Logger logger();
-
-    std::string url = getUrl();
-    Client client(url);
-    
-    Request request = buildRequest(pamh);
-    Result result = client.CheckAccess(request);
-
-    switch(result) {
-        case Result.Allow: {
-            logger.makeAllowLog(/*some data*/);
-            return PAM_SUCCESS;
+    for (int i = 0; i < argc; ++i) {
+        if (std::string(argv[i]) == "debug") {
+            debug = true;
         }
-        case Result.Deny: {
-            logger.makeDenyLog(/*some data*/);
-            return PAM_PERM_DENIED;
-        }
-        case Result.Error: {
-            logger.makeErrorLog(/*some data*/);
-            return PAM_AUTH_ERR;
-        }        
     }
 
-    return PAM_AUTH_ERR;
+    const char* user = nullptr;
+    if (pam_get_user(pamh, &user, NULL) != PAM_SUCCESS || !user) {
+        return PAM_AUTH_ERR;
+    }
+
+    const void* service = nullptr;
+    if (pam_get_item(pamh, PAM_SERVICE, &service) != PAM_SUCCESS || !service) {
+        return PAM_AUTH_ERR;
+    }
+
+    try {
+        Request request = BuildRequest(
+            user,
+            static_cast<const char*>(service),
+            "login"
+        );
+
+        Logger logger(debug);
+
+        std::string url = GetValue("URL") + ":8080/api/v1/decide";
+        Client client(url);
+
+        Decision decision = client.CheckAccess(request);
+
+        if (decision.allow) {
+            logger.makeAllowLog(request, decision);
+            return PAM_SUCCESS;
+        } else {
+            logger.makeDenyLog(request, decision);
+            return PAM_PERM_DENIED;
+        }
+    }
+    catch (const std::exception& e) {
+        Logger logger(debug);
+
+        Request fallback{};
+        fallback.user.Name = user ? user : "unknown";
+        fallback.Service = service ? static_cast<const char*>(service) : "unknown";
+
+        logger.makeErrorLog(fallback, e.what());
+
+        return PAM_PERM_DENIED;
+    }
 }
 
 extern "C" int pam_sm_authenticate(pam_handle_t *pamh, int flags, int argc, const char **argv) {
