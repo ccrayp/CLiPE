@@ -36,12 +36,58 @@ MESSAGES = {
     "user_delete_fail": {
         "ru": "Не удалось удалить пользователя {id}: {code}",
         "en": "Failed to delete user {id}: {code}"
+    },
+    "pam_in_use": {
+    "ru": "Модуль используется в PAM конфигурации: {files}. Удалите его из этих файлов перед удалением.",
+    "en": "Module is used in PAM config: {files}. Remove it from these files before uninstall."
+    },
+    "pam_not_found": {
+        "ru": "Модуль не найден в PAM конфигурации",
+        "en": "Module not found in PAM configuration"
+    },
+    "module_removed": {
+        "ru": "Модуль удалён: {path}",
+        "en": "Module removed: {path}"
+    },
+    "module_not_found": {
+        "ru": "Модуль не найден, удалять нечего",
+        "en": "Module not found, nothing to remove"
+    },
+    "pam_abort": {
+        "ru": "Модуль используется в PAM ({files}). Удаление прервано.",
+        "en": "Module is used in PAM ({files}). Uninstall aborted."
     }
 }
 
 
 def t(key, **kwargs):
     return MESSAGES[key][LANG].format(**kwargs)
+
+
+def find_pam_usage():
+    pam_dir = "/etc/pam.d"
+    used_in = []
+
+    try:
+        for filename in os.listdir(pam_dir):
+            file_path = os.path.join(pam_dir, filename)
+
+            if not os.path.isfile(file_path):
+                continue
+
+            try:
+                with open(file_path, "r") as f:
+                    for line in f:
+                        if "pam_clipe.so" in line:
+                            used_in.append(filename)
+                            break
+            except Exception:
+                continue
+
+    except Exception as e:
+        logging.error(f"Failed to scan /etc/pam.d: {e}")
+
+    return used_in
 
 
 def setup_logging():
@@ -139,7 +185,6 @@ CONFIG_DIR = "/etc/clipe"
 def remove_config():
     try:
         if os.path.exists(CONFIG_DIR):
-            # удаляем все файлы внутри
             for filename in os.listdir(CONFIG_DIR):
                 file_path = os.path.join(CONFIG_DIR, filename)
                 try:
@@ -147,7 +192,6 @@ def remove_config():
                 except Exception as e:
                     logging.error(f"Failed to remove file {file_path}: {e}")
 
-            # удаляем саму директорию
             os.rmdir(CONFIG_DIR)
 
     except PermissionError:
@@ -157,41 +201,45 @@ def remove_config():
 
 
 def get_pam_dir():
-    # try:
-    #     result = subprocess.check_output(
-    #         ["find", "/usr/lib", "-name", "pam_unix.so"],
-    #         text=True
-    #     )
-
-    #     path = result.strip().split("\n")[0]
-    #     return os.path.dirname(path)
-
-    # except Exception as e:
-    #     raise RuntimeError(f"Failed to find PAM directory: {e}")
     return "/lib/aarch64-linux-gnu/security/"
 
 
 def uninstall_module():
     try:
+        used_files = find_pam_usage()
+
+        if used_files:
+            logging.error(
+                t("pam_in_use", files=", ".join(used_files))
+            )
+            return
+        else:
+            logging.info(t("pam_not_found"))
+
         pam_dir = get_pam_dir()
         module_path = os.path.join(pam_dir, "pam_clipe.so")
 
         if not os.path.exists(module_path):
-            print("Module not found, nothing to remove")
+            logging.info(t("module_not_found"))
             return
 
         os.remove(module_path)
-        print(f"Removed: {module_path}")
+        logging.info(t("module_removed", path=module_path))
 
     except PermissionError:
-        print("Permission denied (run with sudo)")
+        logging.error("Permission denied (run with sudo)")
     except Exception as e:
-        print(f"Failed to remove module: {e}")
+        logging.error(f"Failed to remove module: {e}")
 
 
 def main():
     setup_logging()
     load_dotenv()
+
+    used_files = find_pam_usage()
+    if used_files:
+        logging.error(t("pam_abort", files=", ".join(used_files)))
+        return
 
     base_url = os.getenv("URL")
 
