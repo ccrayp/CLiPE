@@ -10,6 +10,7 @@ func ToDTO(r Request) RequestDTO {
 		RequestID: r.RequestID,
 		UserID:    r.UserID,
 		Context:   ctx,
+		Timestamp: r.Timestamp,
 	}
 }
 
@@ -24,7 +25,8 @@ func FromCreateDTO(dto CreateRequestDTO) Request {
 	}
 
 	return Request{
-		UserID:  clean(dto.UserID),
-		Context: condBytes,
+		UserID:    clean(dto.UserID),
+		Context:   condBytes,
+		Timestamp: dto.Timestamp,
 	}
 }

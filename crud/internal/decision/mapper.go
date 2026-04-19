@@ -6,6 +6,7 @@ func ToDTO(d Decision) DecisionDTO {
 		RequestID:  d.RequestID,
 		PolicyID:   d.PolicyID,
 		Result:     d.Result,
+		Timestamp:  d.Timestamp,
 	}
 }
 
@@ -21,5 +22,6 @@ func FromCreateDTO(dto CreateDecisionDTO) Decision {
 		RequestID: dto.RequestID,
 		PolicyID:  clean(dto.PolicyID),
 		Result:    dto.Result,
+		Timestamp: dto.Timestamp,
 	}
 }

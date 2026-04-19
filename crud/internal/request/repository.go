@@ -3,6 +3,7 @@ package request
 import (
 	"clipe/pkg/database"
 	"encoding/json"
+	"time"
 )
 
 type RequestRepository struct {
@@ -40,6 +41,7 @@ func (r *RequestRepository) Select(filter *RequestDTO, limit int, offset int) ([
 }
 
 func (r *RequestRepository) Create(dto *CreateRequestDTO) (*uint, error) {
+	dto.Timestamp = time.Now()
 	model := FromCreateDTO(*dto)
 
 	if err := r.db_.Conn().Create(&model).Error; err != nil {

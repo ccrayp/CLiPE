@@ -1,6 +1,9 @@
 package decision
 
-import "clipe/pkg/database"
+import (
+	"clipe/pkg/database"
+	"time"
+)
 
 type DecisionRepository struct {
 	db_ *database.DB
@@ -42,6 +45,7 @@ func (r *DecisionRepository) Select(filter *DecisionDTO, limit int, offset int) 
 }
 
 func (r *DecisionRepository) Create(dto *CreateDecisionDTO) (*uint, error) {
+	dto.Timestamp = time.Now()
 	model := FromCreateDTO(*dto)
 
 	if err := r.db_.Conn().Create(&model).Error; err != nil {
