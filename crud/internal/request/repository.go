@@ -25,15 +25,6 @@ func (r *RequestRepository) Select(filter *RequestDTO, limit int, offset int) ([
 		if filter.UserID != nil {
 			query = query.Where("user_id = ?", *filter.UserID)
 		}
-		if filter.HostID != nil {
-			query = query.Where("host_id = ?", *filter.HostID)
-		}
-		if filter.ServiceID != nil {
-			query = query.Where("service_id = ?", *filter.ServiceID)
-		}
-		if filter.ActionID != nil {
-			query = query.Where("action_id = ?", *filter.ActionID)
-		}
 	}
 
 	if err := query.Find(&requests).Error; err != nil {
@@ -66,9 +57,6 @@ func (r *RequestRepository) Update(id uint, dto *CreateRequestDTO) error {
 	}
 
 	model.UserID = dto.UserID
-	model.HostID = dto.HostID
-	model.ServiceID = dto.ServiceID
-	model.ActionID = dto.ActionID
 
 	if dto.Context != nil {
 		condBytes, err := json.Marshal(dto.Context)

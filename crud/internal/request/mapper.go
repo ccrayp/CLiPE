@@ -9,9 +9,6 @@ func ToDTO(r Request) RequestDTO {
 	return RequestDTO{
 		RequestID: r.RequestID,
 		UserID:    r.UserID,
-		HostID:    r.HostID,
-		ServiceID: r.ServiceID,
-		ActionID:  r.ActionID,
 		Context:   ctx,
 	}
 }
@@ -27,10 +24,7 @@ func FromCreateDTO(dto CreateRequestDTO) Request {
 	}
 
 	return Request{
-		UserID:    clean(dto.UserID),
-		HostID:    clean(dto.HostID),
-		ServiceID: clean(dto.ServiceID),
-		ActionID:  clean(dto.ActionID),
-		Context:   condBytes,
+		UserID:  clean(dto.UserID),
+		Context: condBytes,
 	}
 }

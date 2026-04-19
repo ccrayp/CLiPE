@@ -1,6 +1,8 @@
 package config
 
-import "os"
+import (
+	"os"
+)
 
 type Config struct {
 	Server struct {
@@ -19,6 +21,8 @@ type Config struct {
 		Name     string
 		Port     string
 	}
+
+	DebugMode bool
 }
 
 func NewConfig() *Config {
@@ -34,6 +38,13 @@ func NewConfig() *Config {
 	cfg.Database.User = os.Getenv("DB_USER")
 	cfg.Database.Password = os.Getenv("DB_PASSWORD")
 	cfg.Database.Name = os.Getenv("DB_NAME")
+
+	tempDebug := os.Getenv("GIN_MODE")
+	if tempDebug != "debug" {
+		cfg.DebugMode = false
+	} else {
+		cfg.DebugMode = true
+	}
 
 	return cfg
 }

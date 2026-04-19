@@ -12,11 +12,13 @@ import (
 
 type HostHandler struct {
 	repository_ *HostRepository
+	debug_      bool
 }
 
-func NewHostHandler(repo *HostRepository) *HostHandler {
+func NewHostHandler(repo *HostRepository, debug bool) *HostHandler {
 	return &HostHandler{
 		repository_: repo,
+		debug_:      debug,
 	}
 }
 

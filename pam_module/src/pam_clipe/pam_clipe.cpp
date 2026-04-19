@@ -27,8 +27,7 @@ extern "C" int pam_sm_acct_mgmt(pam_handle_t *pamh, int flags, int argc, const c
     try {
         Request request = BuildRequest(
             user,
-            static_cast<const char*>(service),
-            "login"
+            static_cast<const char*>(service)
         );
 
         Logger logger(debug);

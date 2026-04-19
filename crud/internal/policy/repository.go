@@ -34,9 +34,6 @@ func (r *PolicyRepository) Create(policy *CreatePolicyDTO) (*uint, error) {
 	model := Policy{
 		PolicyName: policy.PolicyName,
 		UserID:     policy.UserID,
-		HostID:     policy.HostID,
-		ServiceID:  policy.ServiceID,
-		ActionID:   policy.ActionID,
 		RuleID:     policy.RuleID,
 		Status:     policy.Status,
 	}
@@ -59,8 +56,6 @@ func (r *PolicyRepository) Update(id uint, policy *CreatePolicyDTO) error {
 
 	model.PolicyName = policy.PolicyName
 	model.UserID = policy.UserID
-	model.HostID = policy.HostID
-	model.ActionID = policy.ActionID
 	model.RuleID = policy.RuleID
 	model.Status = policy.Status
 

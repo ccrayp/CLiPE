@@ -39,7 +39,7 @@ func (d *Decider) Fallback(response *model.PolicyMatchResponse, request *model.A
 			Name string
 		}{
 			Id:   0,
-			Name: "none",
+			Name: "unknown",
 		},
 		RequestId:  requestId,
 		DecisionId: decisionId,
@@ -52,7 +52,7 @@ func (d *Decider) Evaluate(request *model.ApiRequest) (*model.Decision, error) {
 		return d.Fallback(response, request)
 	}
 
-	requestId, err := d.client.CreateRequest(response.Policy.UserID, response.Policy.HostID, response.Policy.ServiceID, response.Policy.ActionID, request)
+	requestId, err := d.client.CreateRequest(response.Policy.UserID, request)
 	if err != nil {
 		return nil, fmt.Errorf("error in CreateRequest: %s", err.Error())
 	}
@@ -112,6 +112,9 @@ func (d *Decider) ApplyRule(req *model.ApiRequest, rule *model.Rule) (bool, erro
 
 		case "weekday":
 			res, err = d.CheckWeekday(req, &cond)
+
+		case "services":
+			res, err = d.CheckService(req, &cond)
 
 		default:
 			return false, fmt.Errorf("unknown condition type: %s", cond.Type)
@@ -278,7 +281,6 @@ func (d *Decider) CheckTimestamp(req *model.ApiRequest, cond *model.Condition) (
 
 	now := req.Time.Timestamp
 
-	// приводим к времени без даты
 	current := time.Date(0, 0, 0, now.Hour(), now.Minute(), 0, 0, time.UTC)
 	startTime := time.Date(0, 0, 0, start.Hour(), start.Minute(), 0, 0, time.UTC)
 	endTime := time.Date(0, 0, 0, end.Hour(), end.Minute(), 0, 0, time.UTC)
@@ -329,5 +331,43 @@ func (d *Decider) CheckWeekday(req *model.ApiRequest, cond *model.Condition) (bo
 
 	default:
 		return false, fmt.Errorf("unsupported operator for weekday: %s", cond.Operator)
+	}
+}
+
+func (d *Decider) CheckService(req *model.ApiRequest, cond *model.Condition) (bool, error) {
+
+	service := req.Service
+
+	switch cond.Operator {
+
+	case model.OpEquals:
+		val, ok := cond.Value.(string)
+		if !ok {
+			return false, fmt.Errorf("invalid service")
+		}
+
+		return service == strings.ToLower(val), nil
+
+	case model.OpIn:
+		arr, ok := cond.Value.([]interface{})
+		if !ok {
+			return false, fmt.Errorf("invalid service list")
+		}
+
+		for _, v := range arr {
+			s, ok := v.(string)
+			if !ok {
+				continue
+			}
+
+			if service == strings.ToLower(s) {
+				return true, nil
+			}
+		}
+
+		return false, nil
+
+	default:
+		return false, fmt.Errorf("unsupported operator for service: %s", cond.Operator)
 	}
 }

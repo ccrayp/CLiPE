@@ -27,13 +27,13 @@ func (h *Handler) Decide(ctx *gin.Context) {
 	decoder.DisallowUnknownFields()
 
 	if err := decoder.Decode(&dto); err != nil {
+		fmt.Print(err.Error())
 		utils.ErrorRespond(ctx, http.StatusBadRequest, "invalid body", err.Error())
 		return
 	}
 
 	decision, err := h.decider.Evaluate(&dto)
 	if err != nil {
-		fmt.Println(err.Error())
 		utils.ErrorRespond(ctx, http.StatusInternalServerError, nil, err.Error())
 		return
 	}

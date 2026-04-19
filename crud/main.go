@@ -1,14 +1,12 @@
 package main
 
 import (
-	"clipe/internal/action"
 	"clipe/internal/aggregator"
 	"clipe/internal/decision"
 	"clipe/internal/host"
 	"clipe/internal/policy"
 	"clipe/internal/request"
 	"clipe/internal/rule"
-	"clipe/internal/service"
 	"clipe/internal/user"
 	"clipe/pkg/config"
 	"clipe/pkg/database"
@@ -33,12 +31,12 @@ func main() {
 	server := gin.Default()
 	api := server.Group("/api/v" + cfg.Server.ApiVersion + "/internal")
 
-	InitRoutes(api, db, cfg.Server.ApiVersion)
+	InitRoutes(api, db, cfg.Server.ApiVersion, cfg.DebugMode)
 
 	server.Run(":8080")
 }
 
-func InitRoutes(r *gin.RouterGroup, db *database.DB, apiVersion string) {
+func InitRoutes(r *gin.RouterGroup, db *database.DB, apiVersion string, debug bool) {
 
 	r.GET("", func(ctx *gin.Context) {
 		now := time.Now().Format("2006-01-02 15:04:05")
@@ -58,14 +56,12 @@ func InitRoutes(r *gin.RouterGroup, db *database.DB, apiVersion string) {
 		})
 	})
 
-	aggregator.InitRoutes(r, db)
+	aggregator.InitRoutes(r, db, debug)
 
-	action.InitRoutes(r, db)
-	decision.InitRoutes(r, db)
-	host.InitRoutes(r, db)
-	policy.InitRoutes(r, db)
-	request.InitRoutes(r, db)
-	rule.InitRoutes(r, db)
-	service.InitRoutes(r, db)
-	user.InitRoutes(r, db)
+	decision.InitRoutes(r, db, debug)
+	host.InitRoutes(r, db, debug)
+	policy.InitRoutes(r, db, debug)
+	request.InitRoutes(r, db, debug)
+	rule.InitRoutes(r, db, debug)
+	user.InitRoutes(r, db, debug)
 }

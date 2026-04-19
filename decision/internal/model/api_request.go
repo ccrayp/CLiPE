@@ -16,7 +16,6 @@ type ApiRequest struct {
 	} `json:"host"`
 
 	Service string `json:"service"`
-	Action  string `json:"action"`
 
 	Time struct {
 		Timestamp time.Time `json:"timestamp"`
@@ -44,12 +43,6 @@ func GetValue(req *ApiRequest, type_ string) any {
 
 	case "hostname":
 		return req.Host.HostName
-
-	case "service":
-		return req.Service
-
-	case "action":
-		return req.Action
 
 	case "timestamp":
 		return req.Time.Timestamp

@@ -1,10 +1,7 @@
 package aggregator
 
 type AggregatorDTO struct {
-	UserName    string `json:"user_name"`
-	HostIp      string `json:"host_ip"`
-	ServiceName string `json:"service_name"`
-	ActionName  string `json:"action_name"`
+	UserName string `json:"user_name"`
 }
 
 type PolicyMatchResponse struct {
@@ -14,13 +11,10 @@ type PolicyMatchResponse struct {
 }
 
 type PolicyResponse struct {
-	ID        uint   `json:"id"`
-	Name      string `json:"name"`
-	UserID    uint   `json:"user_id,omitempty"`
-	HostID    uint   `json:"host_id,omitempty"`
-	ServiceID uint   `json:"service_id"`
-	ActionID  uint   `json:"action_id"`
-	Status    bool   `json:"status"`
+	ID     uint   `json:"id"`
+	Name   string `json:"name"`
+	UserID uint   `json:"user_id,omitempty"`
+	Status bool   `json:"status"`
 }
 
 type Condition struct {

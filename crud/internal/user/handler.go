@@ -11,11 +11,13 @@ import (
 
 type UserHandler struct {
 	repository_ *UserRepository
+	debug_      bool
 }
 
-func NewUserHandler(repo *UserRepository) *UserHandler {
+func NewUserHandler(repo *UserRepository, debug bool) *UserHandler {
 	return &UserHandler{
 		repository_: repo,
+		debug_:      debug,
 	}
 }
 

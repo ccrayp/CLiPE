@@ -11,11 +11,13 @@ import (
 
 type RuleHandler struct {
 	repository_ *RuleRepository
+	debug_      bool
 }
 
-func NewRuleHandler(repo *RuleRepository) *RuleHandler {
+func NewRuleHandler(repo *RuleRepository, debug bool) *RuleHandler {
 	return &RuleHandler{
 		repository_: repo,
+		debug_:      debug,
 	}
 }
 

@@ -14,11 +14,13 @@ import (
 
 type PolicyHandler struct {
 	repository_ *PolicyRepository
+	debug_      bool
 }
 
-func NewPolicyHandler(service *PolicyRepository) *PolicyHandler {
+func NewPolicyHandler(service *PolicyRepository, debug bool) *PolicyHandler {
 	return &PolicyHandler{
 		repository_: service,
+		debug_:      debug,
 	}
 }
 

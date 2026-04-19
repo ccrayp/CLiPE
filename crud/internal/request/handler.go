@@ -11,11 +11,13 @@ import (
 
 type RequestHandler struct {
 	repository_ *RequestRepository
+	debug_      bool
 }
 
-func NewRequestHandler(repo *RequestRepository) *RequestHandler {
+func NewRequestHandler(repo *RequestRepository, debug bool) *RequestHandler {
 	return &RequestHandler{
 		repository_: repo,
+		debug_:      debug,
 	}
 }
 

@@ -18,7 +18,7 @@ std::string GetValue(const std::string &key)
     throw std::runtime_error(key + " not found in config");
 }
 
-Request BuildRequest(const std::string& username, const std::string& service, const std::string& action) {
+Request BuildRequest(const std::string& username, const std::string& service) {
     Request req{};
 
     struct passwd* pwd = getpwnam(username.c_str());
@@ -49,7 +49,6 @@ Request BuildRequest(const std::string& username, const std::string& service, co
     req.host.Ip = GetValue("IP");
 
     req.Service = service;
-    req.Action = action;
 
     std::time_t now = std::time(nullptr);
     std::tm* gmt = std::gmtime(&now);
@@ -80,7 +79,6 @@ nlohmann::json RequestToJson(const Request& request) {
             {"hostname", request.host.HostName}
         }},
         {"service", request.Service},
-        {"action", request.Action},
         {"time", {
             {"timestamp", request.time.Timestamp},
             {"weekday", request.time.Weekday}

@@ -6,9 +6,9 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func InitRoutes(r *gin.RouterGroup, db *database.DB) {
+func InitRoutes(r *gin.RouterGroup, db *database.DB, debug bool) {
 	repository := NewRuleRep(db)
-	handler := NewRuleHandler(repository)
+	handler := NewRuleHandler(repository, debug)
 
 	group := r.Group("/rules")
 

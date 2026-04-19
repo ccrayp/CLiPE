@@ -18,11 +18,8 @@ type createDecisionDTO struct {
 }
 
 type createRequestDTO struct {
-	UserID    uint        `json:"user_id" binding:"required"`
-	HostID    uint        `json:"host_id" binding:"required"`
-	ServiceID uint        `json:"service_id" binding:"required"`
-	ActionID  uint        `json:"action_id" binding:"required"`
-	Context   interface{} `json:"context"`
+	UserID  uint        `json:"user_id" binding:"required"`
+	Context interface{} `json:"context"`
 }
 
 type Client struct {
@@ -41,13 +38,10 @@ func (c *Client) CheckApiUrl() string {
 	return c.apiUrl
 }
 
-func (c *Client) CreateRequest(userId uint, hostId uint, serviceId uint, actionId uint, request *model.ApiRequest) (uint, error) {
+func (c *Client) CreateRequest(userId uint, request *model.ApiRequest) (uint, error) {
 	dto := createRequestDTO{
-		UserID:    userId,
-		HostID:    hostId,
-		ServiceID: serviceId,
-		ActionID:  actionId,
-		Context:   request,
+		UserID:  userId,
+		Context: request,
 	}
 
 	var resp struct {
@@ -178,15 +172,9 @@ func (c *Client) doPost(path string, dto any, out any) error {
 
 func (c *Client) GetRule(request *model.ApiRequest) (*model.PolicyMatchResponse, error) {
 	dto := struct {
-		UserName    string `json:"user_name"`
-		HostIp      string `json:"host_ip"`
-		ServiceName string `json:"service_name"`
-		ActionName  string `json:"action_name"`
+		UserName string `json:"user_name"`
 	}{
-		UserName:    request.User.Name,
-		HostIp:      request.Host.IP,
-		ServiceName: request.Service,
-		ActionName:  request.Action,
+		UserName: request.User.Name,
 	}
 
 	var resp struct {

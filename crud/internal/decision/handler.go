@@ -11,11 +11,13 @@ import (
 
 type DecisionHandler struct {
 	repository_ *DecisionRepository
+	debug_      bool
 }
 
-func NewDecisionHandler(repo *DecisionRepository) *DecisionHandler {
+func NewDecisionHandler(repo *DecisionRepository, debug bool) *DecisionHandler {
 	return &DecisionHandler{
 		repository_: repo,
+		debug_:      debug,
 	}
 }
 

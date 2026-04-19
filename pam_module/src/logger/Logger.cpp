@@ -43,12 +43,21 @@ void Logger::makeDenyLog(const Request& request, const Decision& decision) {
 }
 
 void Logger::makeErrorLog(const Request& request, const std::string& error) {
-    syslog(LOG_ERR,
-           "user=%s uid=%d service=%s ip=%s error=%s",
-           request.user.Name.c_str(),
-           (int)request.user.Uid,
-           request.Service.c_str(),
-           request.host.Ip.c_str(),
-           error.c_str()
-    );
+    if (debug_) {
+        syslog(LOG_ERR,
+            "user=%s uid=%d service=%s ip=%s error=%s",
+            request.user.Name.c_str(),
+            (int)request.user.Uid,
+            request.Service.c_str(),
+            request.host.Ip.c_str(),
+            error.c_str()
+        );
+    } else {
+        syslog(LOG_ERR,
+            "user=%s service=%s error=%s",
+            request.user.Name.c_str(),
+            request.Service.c_str(),
+            error.c_str()
+        );
+    }
 }

@@ -54,6 +54,6 @@ struct Decision {
     Journal journal;
 };
 
-Request BuildRequest(const std::string& username, const std::string& service, const std::string& action);
+Request BuildRequest(const std::string& username, const std::string& service);
 nlohmann::json RequestToJson(const Request& request);
 std::string GetValue(const std::string &key);
