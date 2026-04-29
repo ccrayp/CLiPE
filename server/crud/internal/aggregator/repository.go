@@ -35,6 +35,7 @@ func (r *AggreagtorRepository) FindUserIdByName(userName string) (*uint, error) 
 func (r *AggreagtorRepository) FindPolicy(userId uint) (*policy.Policy, error) {
 	filter := policy.PolicyDTO{
 		UserID: &userId,
+		//Status: true,
 	}
 
 	record := policy.Policy{}

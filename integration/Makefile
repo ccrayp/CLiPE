@@ -4,6 +4,8 @@ init:
 	.venv/bin/pip install -r requirements.txt
 
 install: init
+	sudo cp ca.crt /usr/local/share/ca-certificates/clipe-ca.crt
+	sudo update-ca-certificates
 	.venv/bin/python scripts/install.py
 
 uninstall: init

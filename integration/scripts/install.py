@@ -128,7 +128,8 @@ def register_host(base_url, ip):
     response = requests.post(
         f"{base_url}/hosts",
         json={"ip": ip},
-        timeout=5
+        timeout=5,
+        verify="/usr/local/share/ca-certificates/clipe-ca.crt"
     )
 
     if response.status_code != 201:
@@ -151,7 +152,8 @@ def register_user(base_url, user, host_id):
             "gid": user.pw_gid,
             "host_id": host_id
         },
-        timeout=5
+        timeout=5,
+        verify="/usr/local/share/ca-certificates/clipe-ca.crt"
     )
 
     if response.status_code != 201:
@@ -197,7 +199,7 @@ def main():
         raise ValueError(t("env_error"))
 
     base_url = base_url.rstrip("/")
-    crud_url = base_url + ":8081/api/v1/internal"
+    crud_url = base_url + "/crud/api/v1/internal"
 
     with tqdm(total=1, desc=t("progress_host")) as host_bar:
         try:

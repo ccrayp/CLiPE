@@ -32,7 +32,7 @@ extern "C" int pam_sm_acct_mgmt(pam_handle_t *pamh, int flags, int argc, const c
 
         Logger logger(debug);
 
-        std::string url = GetValue("URL") + ":8080/api/v1/decide";
+        std::string url = GetValue("URL") + "/access/api/v1/decide";
         Client client(url);
 
         Decision decision = client.CheckAccess(request);

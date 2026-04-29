@@ -112,32 +112,60 @@ cp build/lib/pam_clipe.so ../integration
 # Развертывание
 ## Сервер
 
-1. Для развертывания сервера необходим установленный `docker`
+В системе реализовано безопасное соединение по HTTPS, для него необходим серверный сертификат, подписанный центром сертификации (если он уже есть, то можно сразу перейти к пунтку )
+
+1. Создание локального центра сертификации
+``` bash
+openssl genrsa -out ca.key 4096 &&
+openssl req -x509 -new -nodes \
+  -key ca.key \
+  -sha256 \
+  -days 3650 \
+  -out ca.crt
+```
+
+2. Создание серверного приватного ключа
+``` bash
+openssl genrsa -out server.key 2048
+```
+
+3. Создание запроса на выпуск серверного сертификата
+``` bash
+openssl genrsa -out server.key 2048
+```
+
+4. Подписание серверного сертификата
+``` bash
+openssl x509 -req \
+  -in server.csr \
+  -CA ca.crt \
+  -CAkey ca.key \
+  -CAcreateserial \
+  -out server.crt \
+  -days 365 \
+  -sha256 \
+  -extfile server.ext
+```
+
+5. Для развертывания сервера необходим установленный `docker`
 ``` bash
 sudo apt install docker -y
 ```
-2. После успешной установки `docker` перейти в папку `/server` и выполнить запуск `docker compose` со сборкой
+1. После успешной установки `docker` перейти в папку `/server` и выполнить запуск со сборкой
 ``` bash
-docker compose up --build -d
-```
-3. (Опционально) Просмотр логов компонентов осуществляется путем выполнения команд
-- crud
-``` bash
-// -f отвечает за вывод логов в реальном времени
-docker compose logs crud_server -f
-```
-- decision
-``` bash
-// -f отвечает за вывод логов в реальном времени
-docker compose logs decision_server -f
+make build
 ```
 
 ## Linux-хост для интеграции
 
-Скопировать папку `/integration` на хост, на котором будет осуществляться контроль доступа к сервисам
-
+1. Скопировать/заменить сертификат доверенного центра сертификации в `/integration`
 ``` bash
-scp -r /integration user_name@host_name:~/path/to/directory
+cp ssl/ca.crt ./integration
+```
+
+2. Скопировать папку `/integration` на хост, на котором будет осуществляться контроль доступа к сервисам
+``` bash
+scp -r ./integration user_name@host_name:~/path/to/directory
 ```
 
 # Интеграция

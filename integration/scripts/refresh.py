@@ -90,7 +90,8 @@ def get_host(base_url, ip):
         json={
             "ip": ip
         },
-        timeout=5
+        timeout=5,
+        verify="/usr/local/share/ca-certificates/clipe-ca.crt"
     )
     r.raise_for_status()
 
@@ -108,7 +109,8 @@ def get_users(base_url, host_id):
         json={
             "host_id": host_id
         },
-        timeout=5
+        timeout=5,
+        verify="/usr/local/share/ca-certificates/clipe-ca.crt"
     )
     r.raise_for_status()
 
@@ -124,7 +126,8 @@ def create_user(base_url, user, host_id):
             "gid": user.pw_gid,
             "host_id": host_id
         },
-        timeout=5
+        timeout=5,
+        verify="/usr/local/share/ca-certificates/clipe-ca.crt"
     )
 
     if r.status_code != 201:
@@ -134,7 +137,8 @@ def create_user(base_url, user, host_id):
 def delete_user(base_url, user_id):
     r = requests.delete(
         f"{base_url}/users/{user_id}",
-        timeout=5
+        timeout=5,
+        verify="/usr/local/share/ca-certificates/clipe-ca.crt"
     )
 
     if r.status_code != 200:
@@ -150,7 +154,7 @@ def main():
         raise ValueError(t("env_error"))
 
     base_url = base_url.rstrip("/")
-    base_url = base_url + ":8081/api/v1/internal"
+    base_url = base_url + "/crud/api/v1/internal"
 
     try:
         ip = get_ip()

@@ -138,7 +138,8 @@ def find_host(base_url, ip):
     response = requests.get(
         f"{base_url}/hosts?limit=1&offset=0",
         json={"ip": ip},
-        timeout=5
+        timeout=5,
+        verify="/usr/local/share/ca-certificates/clipe-ca.crt"
     )
     response.raise_for_status()
     return response.json().get("data", {}).get("hosts", [])
@@ -147,7 +148,8 @@ def find_host(base_url, ip):
 def delete_host(base_url, host_id):
     response = requests.delete(
         f"{base_url}/hosts/{host_id}",
-        timeout=5
+        timeout=5,
+        verify="/usr/local/share/ca-certificates/clipe-ca.crt"
     )
 
     if response.status_code != 200:
@@ -162,7 +164,8 @@ def find_user(base_url, user):
             "uid": user.pw_uid,
             "gid": user.pw_gid
         },
-        timeout=5
+        timeout=5,
+        verify="/usr/local/share/ca-certificates/clipe-ca.crt"
     )
     response.raise_for_status()
     return response.json().get("data", {}).get("users", [])
@@ -171,7 +174,8 @@ def find_user(base_url, user):
 def delete_user(base_url, user_id):
     response = requests.delete(
         f"{base_url}/users/{user_id}",
-        timeout=5
+        timeout=5,
+        verify="/usr/local/share/ca-certificates/clipe-ca.crt"
     )
 
     if response.status_code != 200:
@@ -247,7 +251,7 @@ def main():
         raise ValueError(t("env_error"))
 
     base_url = base_url.rstrip("/")
-    base_url = base_url + ":8081/api/v1/internal"
+    base_url = base_url + "/crud/api/v1/internal"
 
     users = pwd.getpwall()
     real_users = [u for u in users if is_real_user(u)]
