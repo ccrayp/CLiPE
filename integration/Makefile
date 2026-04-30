@@ -9,6 +9,8 @@ install: init
 	.venv/bin/python scripts/install.py
 
 uninstall: init
+	sudo rm -f /usr/local/share/ca-certificates/clipe-ca.crt
+	sudo update-ca-certificates
 	.venv/bin/python scripts/uninstall.py
 
 refresh: init
