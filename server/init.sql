@@ -54,3 +54,10 @@ CREATE TABLE decisions (
 	result BOOLEAN NOT NULL
 	timestamp TIMESTAMP NOT NULL DEFAULT NOW()
 );
+
+CREATE TABLE refresh_tokens (
+    id SERIAL PRIMARY KEY,
+    token text NOT NULL,
+    username text NOT NULL,
+    created_at TIMESTAMP DEFAULT now() NOT NULL
+);
