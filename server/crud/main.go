@@ -2,6 +2,7 @@ package main
 
 import (
 	"clipe/internal/aggregator"
+	"clipe/internal/auth"
 	"clipe/internal/decision"
 	"clipe/internal/host"
 	"clipe/internal/policy"
@@ -55,6 +56,8 @@ func InitRoutes(r *gin.RouterGroup, db *database.DB, apiVersion string, debug bo
 			"health": true,
 		})
 	})
+
+	auth.InitRoutes(r, db)
 
 	aggregator.InitRoutes(r, db, debug)
 
