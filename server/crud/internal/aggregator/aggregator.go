@@ -1,6 +1,7 @@
 package aggregator
 
 import (
+	"clipe/internal/auth"
 	"clipe/pkg/utils"
 	"encoding/json"
 	"fmt"
@@ -22,6 +23,11 @@ func NewAggregator(repository *AggreagtorRepository, debug bool) *Aggregator {
 }
 
 func (a *Aggregator) Get(ctx *gin.Context) {
+
+	if auth.Require(ctx, auth.DecisionServer) == nil {
+		return
+	}
+
 	var filter AggregatorDTO
 
 	decoder := json.NewDecoder(ctx.Request.Body)
@@ -63,7 +69,7 @@ func (a *Aggregator) Get(ctx *gin.Context) {
 
 	if policyData.PolicyID == 0 {
 		if a.debug_ {
-			fmt.Printf("policy not found (user_id: %d)", *user_id)
+			fmt.Printf("policy not found (user_id: %d)\n", *user_id)
 		}
 		utils.RespondError(ctx, http.StatusNotFound, "policy not found", "policy not found")
 		return

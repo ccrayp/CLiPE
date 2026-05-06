@@ -12,7 +12,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-var secretKey = []byte(os.Getenv("SECRET_KEY"))
+var secretKey = []byte(os.Getenv("JWT_SECRET_KEY"))
 
 func GenerateToken(username string) (string, error) {
 	claims := &Claims{

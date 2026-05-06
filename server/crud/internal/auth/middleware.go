@@ -53,13 +53,13 @@ func AuthMiddleware() gin.HandlerFunc {
 
 func TokenAuth(caller, token string) (*Principal, error) {
 	switch caller {
-	case "decision_server":
+	case os.Getenv("DECISION_ID"):
 		if token != os.Getenv("DECISION_TOKEN") {
 			return nil, errors.New("invalid internal token")
 		}
 		return &Principal{Type: PrincipalMachine, ID: "decision_server"}, nil
 
-	case "installer":
+	case os.Getenv("INSTALLER_ID"):
 		if token != os.Getenv("INSTALLER_TOKEN") {
 			return nil, errors.New("invalid internal token")
 		}

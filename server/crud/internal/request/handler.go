@@ -1,6 +1,7 @@
 package request
 
 import (
+	"clipe/internal/auth"
 	"clipe/pkg/utils"
 	"encoding/json"
 	"net/http"
@@ -22,6 +23,10 @@ func NewRequestHandler(repo *RequestRepository, debug bool) *RequestHandler {
 }
 
 func (h *RequestHandler) Filter(ctx *gin.Context) {
+
+	if auth.Require(ctx, auth.User) == nil {
+		return
+	}
 
 	limit, err := strconv.Atoi(ctx.Query("limit"))
 	if err != nil {
@@ -57,6 +62,10 @@ func (h *RequestHandler) Filter(ctx *gin.Context) {
 
 func (h *RequestHandler) Create(ctx *gin.Context) {
 
+	if auth.Require(ctx, auth.DecisionServer) == nil {
+		return
+	}
+
 	var dto CreateRequestDTO
 
 	decoder := json.NewDecoder(ctx.Request.Body)
@@ -79,6 +88,10 @@ func (h *RequestHandler) Create(ctx *gin.Context) {
 }
 
 func (h *RequestHandler) Update(ctx *gin.Context) {
+
+	if auth.Require(ctx, auth.User) == nil {
+		return
+	}
 
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
@@ -106,6 +119,10 @@ func (h *RequestHandler) Update(ctx *gin.Context) {
 }
 
 func (h *RequestHandler) Delete(ctx *gin.Context) {
+
+	if auth.Require(ctx, auth.User) == nil {
+		return
+	}
 
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {

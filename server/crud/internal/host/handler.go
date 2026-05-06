@@ -1,6 +1,7 @@
 package host
 
 import (
+	"clipe/internal/auth"
 	"clipe/pkg/utils"
 	"encoding/json"
 	"net"
@@ -23,6 +24,10 @@ func NewHostHandler(repo *HostRepository, debug bool) *HostHandler {
 }
 
 func (h *HostHandler) Filter(ctx *gin.Context) {
+
+	if auth.Require(ctx, auth.User, auth.Installer) == nil {
+		return
+	}
 
 	limit, err := strconv.Atoi(ctx.Query("limit"))
 	if err != nil {
@@ -58,6 +63,10 @@ func (h *HostHandler) Filter(ctx *gin.Context) {
 
 func (h *HostHandler) Create(ctx *gin.Context) {
 
+	if auth.Require(ctx, auth.User, auth.Installer) == nil {
+		return
+	}
+
 	var dto CreateHostDTO
 
 	decoder := json.NewDecoder(ctx.Request.Body)
@@ -85,6 +94,10 @@ func (h *HostHandler) Create(ctx *gin.Context) {
 }
 
 func (h *HostHandler) Update(ctx *gin.Context) {
+
+	if auth.Require(ctx, auth.User) == nil {
+		return
+	}
 
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
@@ -117,6 +130,10 @@ func (h *HostHandler) Update(ctx *gin.Context) {
 }
 
 func (h *HostHandler) Delete(ctx *gin.Context) {
+
+	if auth.Require(ctx, auth.User, auth.Installer) == nil {
+		return
+	}
 
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {

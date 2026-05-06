@@ -1,6 +1,7 @@
 package user
 
 import (
+	"clipe/internal/auth"
 	"clipe/pkg/utils"
 	"encoding/json"
 	"net/http"
@@ -22,6 +23,10 @@ func NewUserHandler(repo *UserRepository, debug bool) *UserHandler {
 }
 
 func (h *UserHandler) Filter(ctx *gin.Context) {
+
+	if auth.Require(ctx, auth.User, auth.Installer) == nil {
+		return
+	}
 
 	limit, err := strconv.Atoi(ctx.Query("limit"))
 	if err != nil {
@@ -57,6 +62,10 @@ func (h *UserHandler) Filter(ctx *gin.Context) {
 
 func (h *UserHandler) Create(ctx *gin.Context) {
 
+	if auth.Require(ctx, auth.User, auth.Installer) == nil {
+		return
+	}
+
 	var dto CreateUserDTO
 
 	decoder := json.NewDecoder(ctx.Request.Body)
@@ -79,6 +88,10 @@ func (h *UserHandler) Create(ctx *gin.Context) {
 }
 
 func (h *UserHandler) Update(ctx *gin.Context) {
+
+	if auth.Require(ctx, auth.User) == nil {
+		return
+	}
 
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
@@ -106,6 +119,10 @@ func (h *UserHandler) Update(ctx *gin.Context) {
 }
 
 func (h *UserHandler) Delete(ctx *gin.Context) {
+
+	if auth.Require(ctx, auth.User, auth.Installer) == nil {
+		return
+	}
 
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {

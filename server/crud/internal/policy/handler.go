@@ -4,6 +4,7 @@
 package policy
 
 import (
+	"clipe/internal/auth"
 	"clipe/pkg/utils"
 	"encoding/json"
 	"net/http"
@@ -25,6 +26,10 @@ func NewPolicyHandler(service *PolicyRepository, debug bool) *PolicyHandler {
 }
 
 func (h *PolicyHandler) Filter(ctx *gin.Context) {
+
+	if auth.Require(ctx, auth.User) == nil {
+		return
+	}
 
 	temp := ctx.Query("limit")
 	limit, err := strconv.Atoi(temp)
@@ -62,6 +67,10 @@ func (h *PolicyHandler) Filter(ctx *gin.Context) {
 
 func (h *PolicyHandler) Create(ctx *gin.Context) {
 
+	if auth.Require(ctx, auth.User) == nil {
+		return
+	}
+
 	var policy CreatePolicyDTO
 
 	decoder := json.NewDecoder(ctx.Request.Body)
@@ -84,6 +93,10 @@ func (h *PolicyHandler) Create(ctx *gin.Context) {
 }
 
 func (h *PolicyHandler) Update(ctx *gin.Context) {
+
+	if auth.Require(ctx, auth.User) == nil {
+		return
+	}
 
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
@@ -109,6 +122,10 @@ func (h *PolicyHandler) Update(ctx *gin.Context) {
 }
 
 func (h *PolicyHandler) Delete(ctx *gin.Context) {
+
+	if auth.Require(ctx, auth.User) == nil {
+		return
+	}
 
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {

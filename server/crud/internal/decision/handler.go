@@ -1,6 +1,7 @@
 package decision
 
 import (
+	"clipe/internal/auth"
 	"clipe/pkg/utils"
 	"encoding/json"
 	"net/http"
@@ -22,6 +23,10 @@ func NewDecisionHandler(repo *DecisionRepository, debug bool) *DecisionHandler {
 }
 
 func (h *DecisionHandler) Filter(ctx *gin.Context) {
+
+	if auth.Require(ctx, auth.User) == nil {
+		return
+	}
 
 	limit, err := strconv.Atoi(ctx.Query("limit"))
 	if err != nil {
@@ -58,6 +63,10 @@ func (h *DecisionHandler) Filter(ctx *gin.Context) {
 
 func (h *DecisionHandler) Create(ctx *gin.Context) {
 
+	if auth.Require(ctx, auth.User, auth.DecisionServer) == nil {
+		return
+	}
+
 	var dto CreateDecisionDTO
 
 	decoder := json.NewDecoder(ctx.Request.Body)
@@ -80,6 +89,10 @@ func (h *DecisionHandler) Create(ctx *gin.Context) {
 }
 
 func (h *DecisionHandler) Update(ctx *gin.Context) {
+
+	if auth.Require(ctx, auth.User) == nil {
+		return
+	}
 
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
@@ -107,6 +120,10 @@ func (h *DecisionHandler) Update(ctx *gin.Context) {
 }
 
 func (h *DecisionHandler) Delete(ctx *gin.Context) {
+
+	if auth.Require(ctx, auth.User) == nil {
+		return
+	}
 
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {

@@ -1,6 +1,7 @@
 package rule
 
 import (
+	"clipe/internal/auth"
 	"clipe/pkg/utils"
 	"encoding/json"
 	"net/http"
@@ -22,6 +23,10 @@ func NewRuleHandler(repo *RuleRepository, debug bool) *RuleHandler {
 }
 
 func (h *RuleHandler) Filter(ctx *gin.Context) {
+
+	if auth.Require(ctx, auth.User) == nil {
+		return
+	}
 
 	limit, err := strconv.Atoi(ctx.Query("limit"))
 	if err != nil {
@@ -57,6 +62,10 @@ func (h *RuleHandler) Filter(ctx *gin.Context) {
 
 func (h *RuleHandler) Create(ctx *gin.Context) {
 
+	if auth.Require(ctx, auth.User) == nil {
+		return
+	}
+
 	var dto CreateRuleDTO
 
 	decoder := json.NewDecoder(ctx.Request.Body)
@@ -79,6 +88,10 @@ func (h *RuleHandler) Create(ctx *gin.Context) {
 }
 
 func (h *RuleHandler) Update(ctx *gin.Context) {
+
+	if auth.Require(ctx, auth.User) == nil {
+		return
+	}
 
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
@@ -106,6 +119,10 @@ func (h *RuleHandler) Update(ctx *gin.Context) {
 }
 
 func (h *RuleHandler) Delete(ctx *gin.Context) {
+
+	if auth.Require(ctx, auth.User) == nil {
+		return
+	}
 
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {

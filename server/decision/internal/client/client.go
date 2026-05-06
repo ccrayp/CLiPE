@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"os"
 )
 
 type createDecisionDTO struct {
@@ -150,6 +151,8 @@ func (c *Client) doPost(path string, dto any, out any) error {
 	}
 
 	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("X-Internal-Token", os.Getenv("DECISION_TOKEN"))
+	req.Header.Set("X-Caller", os.Getenv("DECISION_ID"))
 
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
