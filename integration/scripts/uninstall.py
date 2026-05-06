@@ -134,29 +134,31 @@ def get_ip():
     return ip
 
 
-def find_host(base_url, ip):
+def find_host(base_url, headers, ip):
     response = requests.get(
         f"{base_url}/hosts?limit=1&offset=0",
         json={"ip": ip},
         timeout=5,
-        verify="/usr/local/share/ca-certificates/clipe-ca.crt"
+        verify="/usr/local/share/ca-certificates/clipe-ca.crt",
+        headers=headers
     )
     response.raise_for_status()
     return response.json().get("data", {}).get("hosts", [])
 
 
-def delete_host(base_url, host_id):
+def delete_host(base_url, headers, host_id):
     response = requests.delete(
         f"{base_url}/hosts/{host_id}",
         timeout=5,
-        verify="/usr/local/share/ca-certificates/clipe-ca.crt"
+        verify="/usr/local/share/ca-certificates/clipe-ca.crt",
+        headers=headers
     )
 
     if response.status_code != 200:
         logging.error(t("host_delete_fail", id=host_id, code=response.status_code))
 
 
-def find_user(base_url, user):
+def find_user(base_url, headers, user):
     response = requests.get(
         f"{base_url}/users?limit=1&offset=0",
         json={
@@ -165,17 +167,19 @@ def find_user(base_url, user):
             "gid": user.pw_gid
         },
         timeout=5,
-        verify="/usr/local/share/ca-certificates/clipe-ca.crt"
+        verify="/usr/local/share/ca-certificates/clipe-ca.crt",
+        headers=headers
     )
     response.raise_for_status()
     return response.json().get("data", {}).get("users", [])
 
 
-def delete_user(base_url, user_id):
+def delete_user(base_url, headers, user_id):
     response = requests.delete(
         f"{base_url}/users/{user_id}",
         timeout=5,
-        verify="/usr/local/share/ca-certificates/clipe-ca.crt"
+        verify="/usr/local/share/ca-certificates/clipe-ca.crt",
+        headers=headers
     )
 
     if response.status_code != 200:
@@ -240,6 +244,11 @@ def main():
     setup_logging()
     load_dotenv()
 
+    headers = {
+        "X-Internal-Token": os.getenv("INSTALLER_TOKEN"),
+        "X-Caller": os.getenv("INSTALLER_ID")
+    }
+
     used_files = find_pam_usage()
     if used_files:
         logging.error(t("pam_abort", files=", ".join(used_files)))
@@ -259,10 +268,10 @@ def main():
     with tqdm(total=len(real_users), desc="Removing users") as user_bar:
         for user in real_users:
             try:
-                found_users = find_user(base_url, user)
+                found_users = find_user(base_url, headers, user)
 
                 for u in found_users:
-                    delete_user(base_url, u["user_id"])
+                    delete_user(base_url, headers, u["user_id"])
 
             except requests.exceptions.RequestException as e:
                 logging.error(t("user_network_error", name=user.pw_name, err=e))
@@ -273,10 +282,10 @@ def main():
     with tqdm(total=1, desc="Removing host") as host_bar:
         try:
             ip = get_ip()
-            hosts = find_host(base_url, ip)
+            hosts = find_host(base_url, headers, ip)
 
             for host in hosts:
-                delete_host(base_url, host["host_id"])
+                delete_host(base_url, headers, host["host_id"])
 
         except Exception as e:
             logging.error(t("host_remove_error", err=e))

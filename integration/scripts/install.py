@@ -124,12 +124,13 @@ def get_ip():
     return ip
 
 
-def register_host(base_url, ip):
+def register_host(base_url, headers, ip):
     response = requests.post(
         f"{base_url}/hosts",
         json={"ip": ip},
         timeout=5,
-        verify="/usr/local/share/ca-certificates/clipe-ca.crt"
+        verify="/usr/local/share/ca-certificates/clipe-ca.crt",
+        headers=headers
     )
 
     if response.status_code != 201:
@@ -143,7 +144,7 @@ def register_host(base_url, ip):
         raise Exception(t("host_id_error"))
 
 
-def register_user(base_url, user, host_id):
+def register_user(base_url, headers, user, host_id):
     response = requests.post(
         f"{base_url}/users",
         json={
@@ -153,7 +154,8 @@ def register_user(base_url, user, host_id):
             "host_id": host_id
         },
         timeout=5,
-        verify="/usr/local/share/ca-certificates/clipe-ca.crt"
+        verify="/usr/local/share/ca-certificates/clipe-ca.crt",
+        headers=headers
     )
 
     if response.status_code != 201:
@@ -193,6 +195,11 @@ def main():
     setup_logging()
     load_dotenv()
 
+    headers = {
+        "X-Internal-Token": os.getenv("INSTALLER_TOKEN"),
+        "X-Caller": os.getenv("INSTALLER_ID")
+    }
+
     base_url = os.getenv("URL")
 
     if not base_url:
@@ -204,7 +211,7 @@ def main():
     with tqdm(total=1, desc=t("progress_host")) as host_bar:
         try:
             ip = get_ip()
-            host_id = register_host(crud_url, ip)
+            host_id = register_host(crud_url, headers, ip)
             save_config(base_url, ip)
 
         except Exception as e:
@@ -219,7 +226,7 @@ def main():
     with tqdm(total=len(real_users), desc=t("progress_users")) as user_bar:
         for user in real_users:
             try:
-                register_user(crud_url, user, host_id)
+                register_user(crud_url, headers, user, host_id)
             except requests.exceptions.RequestException as e:
                 logging.error(t("network_error", name=user.pw_name, err=e))
             finally:

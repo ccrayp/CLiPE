@@ -83,7 +83,7 @@ def get_ip():
         s.close()
 
 
-def get_host(base_url, ip):
+def get_host(base_url, headers, ip):
     r = requests.get(
         f"{base_url}/hosts",
         params={"limit": 1, "offset": 0},
@@ -91,7 +91,8 @@ def get_host(base_url, ip):
             "ip": ip
         },
         timeout=5,
-        verify="/usr/local/share/ca-certificates/clipe-ca.crt"
+        verify="/usr/local/share/ca-certificates/clipe-ca.crt",
+        headers=headers
     )
     r.raise_for_status()
 
@@ -102,7 +103,7 @@ def get_host(base_url, ip):
     return hosts[0]["host_id"]
 
 
-def get_users(base_url, host_id):
+def get_users(base_url, headers, host_id):
     r = requests.get(
         f"{base_url}/users",
         params={"limit": 1000, "offset": 0},
@@ -110,14 +111,15 @@ def get_users(base_url, host_id):
             "host_id": host_id
         },
         timeout=5,
-        verify="/usr/local/share/ca-certificates/clipe-ca.crt"
+        verify="/usr/local/share/ca-certificates/clipe-ca.crt",
+        headers=headers
     )
     r.raise_for_status()
 
     return r.json().get("data", {}).get("users", [])
 
 
-def create_user(base_url, user, host_id):
+def create_user(base_url, headers, user, host_id):
     r = requests.post(
         f"{base_url}/users",
         json={
@@ -127,18 +129,20 @@ def create_user(base_url, user, host_id):
             "host_id": host_id
         },
         timeout=5,
-        verify="/usr/local/share/ca-certificates/clipe-ca.crt"
+        verify="/usr/local/share/ca-certificates/clipe-ca.crt",
+        headers=headers
     )
 
     if r.status_code != 201:
         logging.error(t("user_create_fail", name=user.pw_name, code=r.status_code))
 
 
-def delete_user(base_url, user_id):
+def delete_user(base_url, headers, user_id):
     r = requests.delete(
         f"{base_url}/users/{user_id}",
         timeout=5,
-        verify="/usr/local/share/ca-certificates/clipe-ca.crt"
+        verify="/usr/local/share/ca-certificates/clipe-ca.crt",
+        headers=headers
     )
 
     if r.status_code != 200:
@@ -149,6 +153,11 @@ def main():
     setup_logging()
     load_dotenv()
 
+    headers = {
+        "X-Internal-Token": os.getenv("INSTALLER_TOKEN"),
+        "X-Caller": os.getenv("INSTALLER_ID")
+    }
+
     base_url = os.getenv("URL")
     if not base_url:
         raise ValueError(t("env_error"))
@@ -158,7 +167,7 @@ def main():
 
     try:
         ip = get_ip()
-        host_id = get_host(base_url, ip)
+        host_id = get_host(base_url, headers, ip)
     except Exception as e:
         logging.error(str(e))
         return
@@ -168,7 +177,7 @@ def main():
     }
 
     try:
-        remote_users = get_users(base_url, host_id)
+        remote_users = get_users(base_url, headers, host_id)
     except Exception as e:
         logging.error(t("network_error", err=e))
         return
@@ -184,7 +193,7 @@ def main():
 
         for user in to_create:
             try:
-                create_user(base_url, user, host_id)
+                create_user(base_url, headers, user, host_id)
             except Exception as e:
                 logging.error(str(e))
             finally:
@@ -192,7 +201,7 @@ def main():
 
         for user in to_delete:
             try:
-                delete_user(base_url, user["user_id"])
+                delete_user(base_url, headers, user["user_id"])
             except Exception as e:
                 logging.error(str(e))
             finally:
