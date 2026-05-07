@@ -57,7 +57,15 @@ CREATE TABLE decisions (
 
 CREATE TABLE refresh_tokens (
     id SERIAL PRIMARY KEY,
-    token text NOT NULL,
-    username text NOT NULL,
-    created_at TIMESTAMP DEFAULT now() NOT NULL
+    token TEXT NOT NULL,
+    username TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT NOW() NOT NULL
 );
+
+CREATE TABLE sys_users (
+	id SERIAL PRIMARY KEY,
+	username TEXT NOT NULL,
+	password_hash CHAR(60) NOT NULL
+)
+
+INSERT INTO sys_users VALUES (DEFAULT, admin, $2a$10$sTQ8Zx0/KbfuvEn2JhbLjOPn5XEO5iHgxnQpKBE11RQaAvUkkiW9a)
