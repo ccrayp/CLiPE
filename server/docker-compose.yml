@@ -35,8 +35,8 @@ services:
   nginx:
     build: ./nginx
     depends_on:
-      - crud_server
-      - decision_server
+      - api
+      - decision
     ports:
       - "443:443"
     volumes:
@@ -45,8 +45,8 @@ services:
     networks:
       - backend
 
-  crud_server:
-    build: ./crud
+  api:
+    build: ./api
     depends_on:
       - clipe_db
     env_file:
@@ -56,7 +56,7 @@ services:
     networks:
       - backend
 
-  decision_server:
+  decision:
     build: ./decision
     depends_on:
       - clipe_db
