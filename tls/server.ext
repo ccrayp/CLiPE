@@ -6,3 +6,4 @@ subjectAltName=@alt_names
 
 [alt_names]
 DNS.1=clipe
+DNS.2=clipe.local
