@@ -131,7 +131,9 @@ openssl genrsa -out server.key 2048
 
 3. Создание запроса на выпуск серверного сертификата
 ``` bash
-openssl genrsa -out server.key 2048
+openssl req -new \
+  -key server.key \
+  -out server.csr
 ```
 
 4. Подписание серверного сертификата
