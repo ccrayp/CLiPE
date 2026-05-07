@@ -30,7 +30,7 @@ type Client struct {
 
 func NewClient(cfg *config.Config) *Client {
 	return &Client{
-		apiUrl:     "http://crud_server:8080" + "/api/v" + cfg.Server.ApiVersion + "/internal",
+		apiUrl:     "http://api:8080",
 		httpClient: http.Client{},
 	}
 }
