@@ -175,16 +175,6 @@ export function DataTable({
                               <span className="json-preview mono-text">
                                 {formatJsonPreview(value)}
                               </span>
-                              <Button
-                                variant="outline-secondary"
-                                size="sm"
-                                onClick={(event) => {
-                                  event.stopPropagation()
-                                  onViewJson(column.label, value)
-                                }}
-                              >
-                                JSON
-                              </Button>
                             </div>
                           </td>
                         )

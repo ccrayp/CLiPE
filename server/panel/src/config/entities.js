@@ -4,7 +4,7 @@ const relationLabelBuilders = {
   services: (item) => item.service_name,
   rules: (item) => item.rule_name,
   policies: (item) => item.policy_name,
-  requests: (item) => `Запрос #${item.request_id}`,
+  requests: (item) => `Запрос №${item.request_id}`,
 }
 
 export const entityConfigs = [
@@ -74,7 +74,7 @@ export const entityConfigs = [
     ],
     getRecordId: (record) => record.user_id,
     getRecordKey: (record) => `user-${record.user_id}`,
-    getDeleteLabel: (record) => `${record.user_name} (#${record.user_id})`,
+    getDeleteLabel: (record) => `${record.user_name} (№${record.user_id})`,
   },
   {
     key: 'hosts',
@@ -391,7 +391,7 @@ export const entityConfigs = [
     }),
     getRecordKey: (record) => `policy-content-${record.policy_id}-${record.service_id}`,
     getDeleteLabel: (record) =>
-      `policy #${record.policy_id}, service #${record.service_id}`,
+      `policy №${record.policy_id}, service №${record.service_id}`,
   },
   {
     key: 'requests',
@@ -467,7 +467,7 @@ export const entityConfigs = [
     ],
     getRecordId: (record) => record.request_id,
     getRecordKey: (record) => `request-${record.request_id}`,
-    getDeleteLabel: (record) => `Запрос #${record.request_id}`,
+    getDeleteLabel: (record) => `Запрос №${record.request_id}`,
   },
   {
     key: 'decisions',
@@ -594,6 +594,6 @@ export const entityConfigs = [
     ],
     getRecordId: (record) => record.decision_id,
     getRecordKey: (record) => `decision-${record.decision_id}`,
-    getDeleteLabel: (record) => `Решение #${record.decision_id}`,
+    getDeleteLabel: (record) => `Решение №${record.decision_id}`,
   },
 ]

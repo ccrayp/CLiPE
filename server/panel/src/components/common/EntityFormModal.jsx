@@ -152,7 +152,7 @@ export function EntityFormModal({
 
   return (
     <>
-      <Modal show={show} onHide={onHide} size="xl" centered>
+      <Modal show={show} onHide={onHide} size="lg" centered>
         <Modal.Header closeButton>
           <Modal.Title>{title}</Modal.Title>
         </Modal.Header>

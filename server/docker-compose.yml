@@ -37,6 +37,7 @@ services:
     depends_on:
       - api
       - decision
+      - panel
     ports:
       - "443:443"
     volumes:
@@ -67,14 +68,14 @@ services:
     networks:
       - backend
   
-
-  # frontend:
-  #   build: ./frontend
-  #   command: npm run dev -- --host 0.0.0.0 --port 5173
-  #   depends_on:
-  #     - server
-  #   networks:
-  #     - backend
+  panel:
+    build: ./panel
+    #command: npm run dev -- --host 0.0.0.0 --port 5173
+    depends_on:
+      - api
+      - decision
+    networks:
+      - backend
 
 volumes:
   clipe_db_data:
