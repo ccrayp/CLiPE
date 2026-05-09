@@ -62,7 +62,7 @@ export function DashboardPage() {
   return (
     <>
       <PageHeader
-        eyebrow="Dashboard"
+        eyebrow="Домашняя страница"
         title="Панель централизованного управления доступом"
         description="Оперативный обзор основных сущностей, журналов и состояния административного контура CLiPE."
         actions={

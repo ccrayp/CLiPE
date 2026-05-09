@@ -202,7 +202,6 @@ export function DataTable({
       <Card.Footer className="d-flex flex-wrap align-items-center gap-3 table-footer">
         <div className="small text-muted footer-side d-flex align-items-center gap-2 flex-wrap">
           Всего записей: <strong>{total}</strong>
-          {isFetching ? <span className="ms-2">Обновление...</span> : null}
           {onPageSizeChange ? (
             <>
               <span className="ms-2">Строк на странице:</span>

@@ -255,7 +255,6 @@ func (d *Decider) CheckHostname(req *model.ApiRequest, cond *model.Condition) (b
 }
 
 func (d *Decider) CheckTimestamp(req *model.ApiRequest, cond *model.Condition) (bool, error) {
-
 	val, ok := cond.Value.(string)
 	if !ok {
 		return false, fmt.Errorf("invalid time range")
@@ -276,14 +275,19 @@ func (d *Decider) CheckTimestamp(req *model.ApiRequest, cond *model.Condition) (
 		return false, err
 	}
 
-	now := req.Time.Timestamp
+	nowUTC := req.Time.Timestamp
+	loc, err := time.LoadLocation("Europe/Moscow")
+	if err != nil {
+		loc = time.FixedZone("MSK", 3*60*60)
+	}
 
-	current := time.Date(0, 0, 0, now.Hour(), now.Minute(), 0, 0, time.UTC)
-	startTime := time.Date(0, 0, 0, start.Hour(), start.Minute(), 0, 0, time.UTC)
-	endTime := time.Date(0, 0, 0, end.Hour(), end.Minute(), 0, 0, time.UTC)
+	nowLocal := nowUTC.In(loc)
+
+	current := time.Date(0, 0, 0, nowLocal.Hour(), nowLocal.Minute(), 0, 0, loc)
+	startTime := time.Date(0, 0, 0, start.Hour(), start.Minute(), 0, 0, loc)
+	endTime := time.Date(0, 0, 0, end.Hour(), end.Minute(), 0, 0, loc)
 
 	switch cond.Operator {
-
 	case model.OpBetween:
 		return (current.Equal(startTime) || current.After(startTime)) &&
 			(current.Equal(endTime) || current.Before(endTime)), nil

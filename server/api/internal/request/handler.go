@@ -4,6 +4,7 @@ import (
 	"clipe/internal/auth"
 	"clipe/pkg/utils"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -83,6 +84,10 @@ func (h *RequestHandler) Create(ctx *gin.Context) {
 	if err := decoder.Decode(&dto); err != nil {
 		utils.RespondError(ctx, http.StatusBadRequest, "invalid body", err.Error())
 		return
+	}
+
+	if h.debug_ {
+		fmt.Printf("Request: %v\n", dto)
 	}
 
 	id, err := h.repository_.Create(&dto)

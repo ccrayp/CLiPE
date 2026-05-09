@@ -36,7 +36,7 @@ export function AppLayout({ children }) {
         </Offcanvas.Header>
         <Offcanvas.Body>
           <div className="mb-4">
-            <div className="fw-semibold">CLiPE Control</div>
+            <div className="fw-semibold">CLiPE</div>
             <div className="small text-muted">
               Централизованное управление доступом
             </div>
@@ -44,7 +44,7 @@ export function AppLayout({ children }) {
 
           <Nav className="flex-column gap-2 mb-4">
             <NavLink to="/" end className="nav-link app-drawer-link" onClick={() => setShowMenu(false)}>
-              Dashboard
+              Домашняя страница
             </NavLink>
           </Nav>
 

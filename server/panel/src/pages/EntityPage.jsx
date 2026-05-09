@@ -56,7 +56,10 @@ export function EntityPage({ config }) {
   const [debouncedFilters, setDebouncedFilters] = useState(filters)
   const [rows, setRows] = useState([])
   const [total, setTotal] = useState(0)
-  const [page, setPage] = useState(1)
+  const [page, setPage] = useState(() => {
+    const pageParam = searchParams.get('page')
+    return pageParam ? Number(pageParam) : 1
+  })
   const [pageSize, setPageSize] = useState(() => {
     const limit = Number(searchParams.get('limit') ?? DEFAULT_PAGE_SIZE)
     return [10, 20, 50, 100].includes(limit) ? limit : DEFAULT_PAGE_SIZE
@@ -79,27 +82,45 @@ export function EntityPage({ config }) {
     value: null,
   })
   const rowsCountRef = useRef(0)
+  const shouldResetPageRef = useRef(false) // Флаг для сброса страницы
 
   const initialFilters = useMemo(
     () => buildInitialFilters(config.filters, searchParams),
     [config.filters, searchParams],
   )
 
+  // Сброс страницы только когда меняются фильтры (не при пагинации)
   useEffect(() => {
+    // Синхронизируем фильтры из URL
     setFilters(initialFilters)
     setDebouncedFilters(initialFilters)
-    setPage(1)
-  }, [initialFilters, config.key])
 
+    // Синхронизируем страницу из URL
+    const pageParam = searchParams.get('page')
+    const nextPage = pageParam ? Number(pageParam) : 1
+    setPage(nextPage)
+
+    // Синхронизируем размер страницы из URL
+    const limitParam = Number(searchParams.get('limit') ?? DEFAULT_PAGE_SIZE)
+    const nextPageSize = [10, 20, 50, 100].includes(limitParam)
+      ? limitParam
+      : DEFAULT_PAGE_SIZE
+
+    setPageSize(nextPageSize)
+  }, [initialFilters, config.key, searchParams])
+
+  // Дебаунс фильтров - НЕ сбрасываем страницу здесь!
   useEffect(() => {
     const timer = window.setTimeout(() => {
       setDebouncedFilters(filters)
-      setPage(1)
     }, SEARCH_DEBOUNCE_MS)
 
     return () => window.clearTimeout(timer)
   }, [filters])
 
+ 
+
+  // Синхронизация URL с состоянием
   useEffect(() => {
     const nextParams = new URLSearchParams()
 
@@ -156,6 +177,7 @@ export function EntityPage({ config }) {
     rowsCountRef.current = rows.length
   }, [rows])
 
+  // Загрузка данных
   useEffect(() => {
     let mounted = true
 
@@ -166,10 +188,13 @@ export function EntityPage({ config }) {
       setError('')
 
       try {
+        const normalizedFilters = normalizeFilters(config.filters, debouncedFilters)
+        const offset = (page - 1) * pageSize
+        
         const result = await apiMap[config.key].search(
-          normalizeFilters(config.filters, debouncedFilters),
+          normalizedFilters,
           pageSize,
-          (page - 1) * pageSize,
+          offset,
         )
 
         if (!mounted) {
@@ -180,7 +205,7 @@ export function EntityPage({ config }) {
           result.items.map((item, index) => ({
             ...item,
             _rowKey: config.getRecordKey(item),
-            _rowNumber: (page - 1) * pageSize + index + 1,
+            _rowNumber: offset + index + 1,
           })),
         )
         setTotal(result.count)
@@ -287,6 +312,9 @@ export function EntityPage({ config }) {
     }
   }
 
+  // Отладочный вывод
+  console.log('Current page:', page, 'Filters:', filters, 'Debounced:', debouncedFilters)
+
   return (
     <>
       <PageHeader
@@ -317,15 +345,20 @@ export function EntityPage({ config }) {
         fields={config.filters}
         value={filters}
         optionsMap={optionsMap}
-        onChange={(name, value) =>
+        onChange={(name, value) => {
           setFilters((previous) => ({
             ...previous,
             [name]: value,
           }))
-        }
+
+          if (page !== 1) {
+            setPage(1)
+          }
+        }}
         onReset={() => {
-          setFilters(buildInitialFilters(config.filters, new URLSearchParams()))
-          setDebouncedFilters(buildInitialFilters(config.filters, new URLSearchParams()))
+          const emptyFilters = buildInitialFilters(config.filters, new URLSearchParams())
+          setFilters(emptyFilters)
+          setDebouncedFilters(emptyFilters)
           setPage(1)
         }}
       />
