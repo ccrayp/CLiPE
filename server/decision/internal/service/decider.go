@@ -113,9 +113,6 @@ func (d *Decider) ApplyRule(req *model.ApiRequest, rule *model.Rule) (bool, erro
 		case "weekday":
 			res, err = d.CheckWeekday(req, &cond)
 
-		case "services":
-			res, err = d.CheckService(req, &cond)
-
 		default:
 			return false, fmt.Errorf("unknown condition type: %s", cond.Type)
 		}
