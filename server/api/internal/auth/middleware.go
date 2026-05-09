@@ -3,6 +3,7 @@ package auth
 import (
 	"clipe/pkg/utils"
 	"errors"
+	"fmt"
 	"net/http"
 	"os"
 
@@ -14,6 +15,8 @@ func AuthMiddleware() gin.HandlerFunc {
 		authHeader := ctx.GetHeader("Authorization")
 		internalToken := ctx.GetHeader("X-Internal-Token")
 		caller := ctx.GetHeader("X-Caller")
+
+		fmt.Println(authHeader)
 
 		switch {
 		case authHeader != "" && internalToken != "":

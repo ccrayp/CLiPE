@@ -175,9 +175,11 @@ func (c *Client) doPost(path string, dto any, out any) error {
 
 func (c *Client) GetRule(request *model.ApiRequest) (*model.PolicyMatchResponse, error) {
 	dto := struct {
-		UserName string `json:"user_name"`
+		UserName    string `json:"user_name"`
+		ServiceName string `json:"service_name"`
 	}{
-		UserName: request.User.Name,
+		UserName:    request.User.Name,
+		ServiceName: request.Service,
 	}
 
 	var resp struct {

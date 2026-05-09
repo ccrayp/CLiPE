@@ -25,6 +25,11 @@ CREATE TABLE users (
 	host_id INT NOT NULL REFERENCES hosts(host_id) ON DELETE CASCADE
 );
 
+CREATE TABLE services (
+	service_id SERIAL PRIMARY KEY,
+	service_name TEXT NOT NULL UNIQUE
+)
+
 CREATE TABLE rules (
 	rule_id SERIAL PRIMARY KEY,
 	rule_name VARCHAR(100) NOT NULL UNIQUE,
@@ -35,10 +40,16 @@ CREATE TABLE rules (
 CREATE TABLE policies (
 	policy_id SERIAL PRIMARY KEY,
 	policy_name VARCHAR(100) NOT NULL UNIQUE,
-	user_id INT NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
-	rule_id INT NOT NULL REFERENCES rules(rule_id) ON DELETE CASCADE,
+	user_id INT NOT NULL UNIQUE REFERENCES users(user_id) ON DELETE CASCADE,
 	status BOOLEAN NOT NULL DEFAULT false
 );
+
+CREATE TABLE policy_contents (
+	policy_id INT NOT NULL REFERENCES policies(policy_id) ON DELETE CASCADE,
+    service_id INT NOT NULL REFERENCES services(service_id) ON DELETE CASCADE,
+    rule_id INT NOT NULL REFERENCES rules(rule_id) ON DELETE CASCADE,
+    PRIMARY KEY (policy_id, service_id)
+)
 
 CREATE TABLE requests (
 	request_id SERIAL PRIMARY KEY,
@@ -68,4 +79,4 @@ CREATE TABLE sys_users (
 	password_hash CHAR(60) NOT NULL
 )
 
-INSERT INTO sys_users VALUES (DEFAULT, admin, $2a$10$sTQ8Zx0/KbfuvEn2JhbLjOPn5XEO5iHgxnQpKBE11RQaAvUkkiW9a)
+INSERT INTO sys_users VALUES (DEFAULT, 'admin', '$2a$10$sTQ8Zx0/KbfuvEn2JhbLjOPn5XEO5iHgxnQpKBE11RQaAvUkkiW9a')

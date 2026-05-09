@@ -18,7 +18,7 @@ func main() {
 	cfg := config.NewConfig()
 
 	server := gin.Default()
-	api := server.Group("/api/v" + cfg.Server.ApiVersion)
+	api := server.Group("")
 
 	client := client.NewClient(cfg)
 
@@ -29,7 +29,7 @@ func main() {
 
 func InitRoutes(r *gin.RouterGroup, client *client.Client, apiVersion string, defaultDecision bool) {
 
-	r.GET("", func(ctx *gin.Context) {
+	r.GET("/", func(ctx *gin.Context) {
 		now := time.Now().Format("2006-01-02 15:04:05")
 
 		html := fmt.Sprintf(`

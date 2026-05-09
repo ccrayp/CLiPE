@@ -6,8 +6,10 @@ import (
 	"clipe/internal/decision"
 	"clipe/internal/host"
 	"clipe/internal/policy"
+	policycontent "clipe/internal/policy_content"
 	"clipe/internal/request"
 	"clipe/internal/rule"
+	"clipe/internal/service"
 	"clipe/internal/user"
 	"clipe/pkg/config"
 	"clipe/pkg/database"
@@ -57,14 +59,14 @@ func InitRoutes(r *gin.RouterGroup, db *database.DB, apiVersion string, debug bo
 		})
 	})
 
-	auth.InitRoutes(r, db)
-
 	aggregator.InitRoutes(r, db, debug)
-
+	auth.InitRoutes(r, db)
 	decision.InitRoutes(r, db, debug)
 	host.InitRoutes(r, db, debug)
 	policy.InitRoutes(r, db, debug)
+	policycontent.InitRoutes(r, db, debug)
 	request.InitRoutes(r, db, debug)
 	rule.InitRoutes(r, db, debug)
+	service.InitRoutes(r, db, debug)
 	user.InitRoutes(r, db, debug)
 }

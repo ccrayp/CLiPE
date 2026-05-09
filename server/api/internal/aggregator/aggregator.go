@@ -41,6 +41,28 @@ func (a *Aggregator) Get(ctx *gin.Context) {
 		return
 	}
 
+	if a.debug_ {
+		fmt.Println(filter)
+	}
+
+	serviceData, err := a.repository_.FindService(filter.ServiceName)
+	if err != nil {
+		if a.debug_ {
+			fmt.Println(err.Error())
+		}
+		utils.RespondError(ctx, http.StatusInternalServerError, "failed to find service", err.Error())
+		return
+	}
+
+	if serviceData.ServiceID == 0 {
+		if a.debug_ {
+			fmt.Printf("service not found (service_name: %s)\n", filter.ServiceName)
+		}
+		a.repository_.CreateService(filter.ServiceName)
+		utils.RespondError(ctx, http.StatusNotFound, "policy not found", "policy not found")
+		return
+	}
+
 	user_id, err := a.repository_.FindUserIdByName(filter.UserName)
 	if err != nil {
 		if a.debug_ {
@@ -75,15 +97,7 @@ func (a *Aggregator) Get(ctx *gin.Context) {
 		return
 	}
 
-	if policyData.RuleID == nil {
-		if a.debug_ {
-			fmt.Printf("policy (id: %d) has no rule\n", policyData.PolicyID)
-		}
-		utils.RespondError(ctx, http.StatusInternalServerError, "policy has no rule", "policy has no rule")
-		return
-	}
-
-	ruleData, err := a.repository_.FindRuleById(*policyData.RuleID)
+	ruleData, err := a.repository_.FindRule(serviceData.ServiceID, policyData.PolicyID)
 	if err != nil {
 		if a.debug_ {
 			fmt.Println(err.Error())

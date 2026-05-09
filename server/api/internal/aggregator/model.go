@@ -1,7 +1,8 @@
 package aggregator
 
 type AggregatorDTO struct {
-	UserName string `json:"user_name"`
+	UserName    string `json:"user_name"`
+	ServiceName string `json:"service_name"`
 }
 
 type PolicyMatchResponse struct {
