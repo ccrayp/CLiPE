@@ -5,9 +5,7 @@ func ToDTO(p Policy) PolicyDTO {
 		PolicyID:   p.PolicyID,
 		PolicyName: p.PolicyName,
 		Status:     p.Status,
-
-		UserID: p.UserID,
-		RuleID: p.RuleID,
+		UserID:     p.UserID,
 	}
 }
 
@@ -15,8 +13,6 @@ func FromCreateDTO(dto CreatePolicyDTO) Policy {
 	return Policy{
 		PolicyName: dto.PolicyName,
 		Status:     dto.Status,
-
-		UserID: dto.UserID,
-		RuleID: dto.RuleID,
+		UserID:     dto.UserID,
 	}
 }

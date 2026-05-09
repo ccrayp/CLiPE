@@ -43,7 +43,6 @@ func (r *PolicyRepository) Create(policy *CreatePolicyDTO) (*uint, error) {
 	model := Policy{
 		PolicyName: policy.PolicyName,
 		UserID:     policy.UserID,
-		RuleID:     policy.RuleID,
 		Status:     policy.Status,
 	}
 
@@ -65,7 +64,6 @@ func (r *PolicyRepository) Update(id uint, policy *CreatePolicyDTO) error {
 
 	model.PolicyName = policy.PolicyName
 	model.UserID = policy.UserID
-	model.RuleID = policy.RuleID
 	model.Status = policy.Status
 
 	result := r.db_.Conn().Save(&model)
