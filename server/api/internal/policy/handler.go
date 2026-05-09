@@ -7,6 +7,7 @@ import (
 	"clipe/internal/auth"
 	"clipe/pkg/utils"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -52,6 +53,10 @@ func (h *PolicyHandler) Filter(ctx *gin.Context) {
 	if err := decoder.Decode(&policy); err != nil {
 		utils.RespondError(ctx, http.StatusBadRequest, "invalid body", err.Error())
 		return
+	}
+
+	if h.debug_ {
+		fmt.Printf("search policy: %v", policy)
 	}
 
 	data, err := h.repository_.Select(&policy, limit, offset)

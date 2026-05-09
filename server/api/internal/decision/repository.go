@@ -13,7 +13,7 @@ func NewDecisionRep(db *database.DB) *DecisionRepository {
 	return &DecisionRepository{db_: db}
 }
 
-func (r *DecisionRepository) Select(filter *DecisionDTO, limit int, offset int) ([]DecisionDTO, error) {
+func (r *DecisionRepository) Select(filter *SearchDecisionDTO, limit int, offset int) ([]DecisionDTO, error) {
 	var decisions []Decision
 
 	query := r.db_.Conn().
@@ -29,6 +29,9 @@ func (r *DecisionRepository) Select(filter *DecisionDTO, limit int, offset int) 
 		}
 		if filter.PolicyID != nil {
 			query = query.Where("policy_id = ?", *filter.PolicyID)
+		}
+		if filter.Result != nil {
+			query = query.Where("result = ?", *filter.Result)
 		}
 	}
 

@@ -11,24 +11,35 @@ func NewUserRep(db *database.DB) *UserRepository {
 }
 
 func (r *UserRepository) Select(filter *UserDTO, limit int, offset int) ([]UserDTO, error) {
-
 	var users []User
 
-	if err := r.db_.Conn().
+	query := r.db_.Conn().
+		Model(&User{}).
 		Limit(limit).
-		Offset(offset).
-		Where(&User{
-			UserID:   filter.UserID,
-			UserName: filter.UserName,
-			UID:      filter.UID,
-			GID:      filter.GID,
-			HostId:   filter.HostId,
-		}).
-		Find(&users).Error; err != nil {
+		Offset(offset)
+
+	if filter.UserID != 0 {
+		query = query.Where("user_id = ?", filter.UserID)
+	}
+	if filter.UID != 0 {
+		query = query.Where("uid = ?", filter.UID)
+	}
+	if filter.GID != 0 {
+		query = query.Where("gid = ?", filter.GID)
+	}
+	if filter.HostId != 0 {
+		query = query.Where("host_id = ?", filter.HostId)
+	}
+
+	if filter.UserName != "" {
+		query = query.Where("user_name ILIKE ?", "%"+filter.UserName+"%")
+	}
+
+	if err := query.Find(&users).Error; err != nil {
 		return nil, err
 	}
 
-	var result []UserDTO
+	result := make([]UserDTO, 0, len(users))
 	for _, u := range users {
 		result = append(result, ToDTO(u))
 	}

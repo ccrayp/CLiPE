@@ -11,18 +11,26 @@ func NewServiceRep(db *database.DB) *ServiceRepository {
 }
 
 func (r *ServiceRepository) Select(filter *ServiceDTO, limit int, offset int) ([]ServiceDTO, error) {
-
 	var services []Service
 
-	if err := r.db_.Conn().
+	query := r.db_.Conn().
+		Model(&Service{}).
 		Limit(limit).
-		Offset(offset).
-		Where(filter).
-		Find(&services).Error; err != nil {
+		Offset(offset)
+
+	if filter.ServiceID != 0 {
+		query = query.Where("service_id = ?", filter.ServiceID)
+	}
+
+	if filter.ServiceName != "" {
+		query = query.Where("service_name ILIKE ?", "%"+filter.ServiceName+"%")
+	}
+
+	if err := query.Find(&services).Error; err != nil {
 		return nil, err
 	}
 
-	var result []ServiceDTO
+	result := make([]ServiceDTO, 0, len(services))
 	for _, s := range services {
 		result = append(result, ToDTO(s))
 	}

@@ -4,6 +4,7 @@ import (
 	"clipe/internal/auth"
 	"clipe/pkg/utils"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -47,6 +48,10 @@ func (h *UserHandler) Filter(ctx *gin.Context) {
 	if err := decoder.Decode(&filter); err != nil {
 		utils.RespondError(ctx, http.StatusBadRequest, "invalid body", err.Error())
 		return
+	}
+
+	if h.debug_ {
+		fmt.Printf("search user: %v\n", filter)
 	}
 
 	data, err := h.repository_.Select(&filter, limit, offset)

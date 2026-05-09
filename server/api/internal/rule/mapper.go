@@ -6,11 +6,13 @@ func ToDTO(r Rule) RuleDTO {
 	var condition interface{}
 	_ = json.Unmarshal(r.Condition, &condition)
 
+	effect := r.Effect
+
 	return RuleDTO{
 		RuleID:    r.RuleID,
 		RuleName:  r.RuleName,
 		Condition: condition,
-		Effect:    r.Effect,
+		Effect:    &effect,
 	}
 }
 

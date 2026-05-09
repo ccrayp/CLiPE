@@ -1,10 +1,12 @@
 package policy
 
 func ToDTO(p Policy) PolicyDTO {
+	status := p.Status
+
 	return PolicyDTO{
 		PolicyID:   p.PolicyID,
 		PolicyName: p.PolicyName,
-		Status:     p.Status,
+		Status:     &status,
 		UserID:     p.UserID,
 	}
 }

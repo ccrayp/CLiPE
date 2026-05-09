@@ -17,15 +17,8 @@ func ToDTO(r Request) RequestDTO {
 func FromCreateDTO(dto CreateRequestDTO) Request {
 	condBytes, _ := json.Marshal(dto.Context)
 
-	clean := func(v *uint) *uint {
-		if v == nil || *v == 0 {
-			return nil
-		}
-		return v
-	}
-
 	return Request{
-		UserID:    clean(dto.UserID),
+		UserID:    dto.UserID,
 		Context:   condBytes,
 		Timestamp: dto.Timestamp,
 	}

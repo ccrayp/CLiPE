@@ -17,14 +17,26 @@ func (r *PolicyContentRepository) Select(
 	limit int,
 	offset int,
 ) ([]PolicyContentDTO, error) {
-
 	var models []PolicyContent
 
-	if err := r.db_.Conn().
-		Where(filter).
+	query := r.db_.Conn().
+		Model(&PolicyContent{}).
 		Limit(limit).
-		Offset(offset).
-		Find(&models).Error; err != nil {
+		Offset(offset)
+
+	if filter != nil {
+		if filter.PolicyID != 0 {
+			query = query.Where("policy_id = ?", filter.PolicyID)
+		}
+		if filter.ServiceID != 0 {
+			query = query.Where("service_id = ?", filter.ServiceID)
+		}
+		if filter.RuleID != 0 {
+			query = query.Where("rule_id = ?", filter.RuleID)
+		}
+	}
+
+	if err := query.Find(&models).Error; err != nil {
 		return nil, err
 	}
 

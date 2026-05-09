@@ -40,7 +40,7 @@ func (h *DecisionHandler) Filter(ctx *gin.Context) {
 		return
 	}
 
-	var filter DecisionDTO
+	var filter SearchDecisionDTO
 
 	decoder := json.NewDecoder(ctx.Request.Body)
 	decoder.DisallowUnknownFields()

@@ -4,7 +4,7 @@ type RuleDTO struct {
 	RuleID    uint        `json:"rule_id"`
 	RuleName  string      `json:"rule_name"`
 	Condition interface{} `json:"conditions"`
-	Effect    bool        `json:"effect"`
+	Effect    *bool       `json:"effect,omitempty"`
 }
 
 type CreateRuleDTO struct {

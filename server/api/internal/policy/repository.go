@@ -14,16 +14,39 @@ func NewPolicyRep(db *database.DB) *PolicyRepository {
 	}
 }
 
-func (r *PolicyRepository) Select(policy *PolicyDTO, limit int, offset int) ([]PolicyDTO, error) {
+func (r *PolicyRepository) Select(filter *PolicyDTO, limit int, offset int) ([]PolicyDTO, error) {
 	var policies []Policy
 
-	if err := r.db_.Conn().Limit(limit).Offset(offset).Where(policy).Find(&policies).Error; err != nil {
+	query := r.db_.Conn().
+		Model(&Policy{}).
+		Limit(limit).
+		Offset(offset)
+
+	if filter != nil {
+		if filter.PolicyID != 0 {
+			query = query.Where("policy_id = ?", filter.PolicyID)
+		}
+
+		if filter.PolicyName != "" {
+			query = query.Where("policy_name ILIKE ?", "%"+filter.PolicyName+"%")
+		}
+
+		if filter.UserID != 0 {
+			query = query.Where("user_id = ?", filter.UserID)
+		}
+
+		if filter.Status != nil {
+			query = query.Where("status = ?", *filter.Status)
+		}
+	}
+
+	if err := query.Find(&policies).Error; err != nil {
 		return nil, err
 	}
 
-	var result []PolicyDTO
-	for _, a := range policies {
-		result = append(result, ToDTO(a))
+	result := make([]PolicyDTO, 0, len(policies))
+	for _, p := range policies {
+		result = append(result, ToDTO(p))
 	}
 
 	return result, nil

@@ -127,7 +127,7 @@ func (a *Aggregator) Get(ctx *gin.Context) {
 		Policy: PolicyResponse{
 			ID:     policyData.PolicyID,
 			Name:   policyData.PolicyName,
-			UserID: *policyData.UserID,
+			UserID: policyData.UserID,
 			Status: policyData.Status,
 		},
 		Rule: Rule{

@@ -11,18 +11,28 @@ func NewHostRep(db *database.DB) *HostRepository {
 }
 
 func (r *HostRepository) Select(filter *HostDTO, limit int, offset int) ([]HostDTO, error) {
-
 	var hosts []Host
 
-	if err := r.db_.Conn().
+	query := r.db_.Conn().
+		Model(&Host{}).
 		Limit(limit).
-		Offset(offset).
-		Where(filter).
-		Find(&hosts).Error; err != nil {
+		Offset(offset)
+
+	if filter != nil {
+		if filter.HostID != 0 {
+			query = query.Where("host_id = ?", filter.HostID)
+		}
+
+		if filter.IP != "" {
+			query = query.Where("ip ILIKE ?", "%"+filter.IP+"%")
+		}
+	}
+
+	if err := query.Find(&hosts).Error; err != nil {
 		return nil, err
 	}
 
-	var result []HostDTO
+	result := make([]HostDTO, 0, len(hosts))
 	for _, h := range hosts {
 		result = append(result, ToDTO(h))
 	}

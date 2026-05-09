@@ -14,28 +14,35 @@ func NewRuleRep(db *database.DB) *RuleRepository {
 }
 
 func (r *RuleRepository) Select(filter *RuleDTO, limit int, offset int) ([]RuleDTO, error) {
-
 	var rules []Rule
 
 	query := r.db_.Conn().
+		Model(&Rule{}).
 		Limit(limit).
 		Offset(offset)
 
-	if filter.RuleID != 0 {
-		query = query.Where("rule_id = ?", filter.RuleID)
+	if filter != nil {
+		if filter.RuleID != 0 {
+			query = query.Where("rule_id = ?", filter.RuleID)
+		}
+
+		if filter.RuleName != "" {
+			query = query.Where("rule_name ILIKE ?", "%"+filter.RuleName+"%")
+		}
+
+		// Фильтруем по effect только если поле передано в JSON
+		if filter.Effect != nil {
+			query = query.Where("effect = ?", *filter.Effect)
+		}
 	}
-	if filter.RuleName != "" {
-		query = query.Where("rule_name = ?", filter.RuleName)
-	}
-	query = query.Where("effect = ?", filter.Effect)
 
 	if err := query.Find(&rules).Error; err != nil {
 		return nil, err
 	}
 
-	var result []RuleDTO
-	for _, r := range rules {
-		result = append(result, ToDTO(r))
+	result := make([]RuleDTO, 0, len(rules))
+	for _, rule := range rules {
+		result = append(result, ToDTO(rule))
 	}
 
 	return result, nil

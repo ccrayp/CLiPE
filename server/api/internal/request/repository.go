@@ -17,14 +17,18 @@ func NewRequestRep(db *database.DB) *RequestRepository {
 func (r *RequestRepository) Select(filter *RequestDTO, limit int, offset int) ([]RequestDTO, error) {
 	var requests []Request
 
-	query := r.db_.Conn().Limit(limit).Offset(offset)
+	query := r.db_.Conn().
+		Model(&Request{}).
+		Limit(limit).
+		Offset(offset)
 
 	if filter != nil {
 		if filter.RequestID != 0 {
 			query = query.Where("request_id = ?", filter.RequestID)
 		}
-		if filter.UserID != nil {
-			query = query.Where("user_id = ?", *filter.UserID)
+
+		if filter.UserID != 0 {
+			query = query.Where("user_id = ?", filter.UserID)
 		}
 	}
 
