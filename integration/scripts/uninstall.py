@@ -18,8 +18,8 @@ LANG = get_lang()
 
 MESSAGES = {
     "env_error": {
-        "ru": "CRUD_URL не задан",
-        "en": "CRUD_URL is not set"
+        "ru": "URL не задан",
+        "en": "URL is not set"
     },
     "host_remove_error": {
         "ru": "Ошибка удаления хоста: {err}",
@@ -240,6 +240,46 @@ def uninstall_module():
         logging.error(f"Failed to remove module: {e}")
 
 
+def remove_certificate(cert_path="/usr/local/share/ca-certificates/clipe-ca.crt"):
+    try:
+        if os.path.exists(cert_path):
+            if os.geteuid() != 0:
+                subprocess.run(["sudo", "rm", "-f", cert_path], check=True)
+            else:
+                os.remove(cert_path)
+            logging.info(t("cert_removed", path=cert_path))
+        else:
+            logging.warning(t("cert_not_found", path=cert_path))
+        
+        if os.geteuid() != 0:
+            result = subprocess.run(
+                ["sudo", "update-ca-certificates", "--fresh"],
+                capture_output=True,
+                text=True,
+                check=False
+            )
+        else:
+            result = subprocess.run(
+                ["update-ca-certificates", "--fresh"],
+                capture_output=True,
+                text=True,
+                check=False
+            )
+        
+        if result.returncode == 0:
+            logging.info(t("cert_store_updated"))
+            return True
+        else:
+            logging.error(t("cert_store_error", err=result.stderr))
+            return False
+            
+    except subprocess.CalledProcessError as e:
+        logging.error(t("cert_remove_cmd_error", err=e))
+        return False
+    except Exception as e:
+        logging.error(t("cert_remove_error", err=e))
+        return False
+
 def main():
     setup_logging()
     load_dotenv()
@@ -260,7 +300,7 @@ def main():
         raise ValueError(t("env_error"))
 
     base_url = base_url.rstrip("/")
-    base_url = base_url + "/crud/api/v1/internal"
+    base_url = base_url + "/api/v1"
 
     users = pwd.getpwall()
     real_users = [u for u in users if is_real_user(u)]
@@ -292,6 +332,13 @@ def main():
 
         finally:
             host_bar.update(1)
+    
+    with tqdm(total=1, desc="Removing certificate and updating store") as cert_bar:
+        if remove_certificate():
+            cert_bar.update(1)
+        else:
+            cert_bar.update(1)
+            logging.warning(t("cert_remove_warning"))
     
     remove_config()
     uninstall_module()

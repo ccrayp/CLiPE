@@ -27,8 +27,8 @@ MESSAGES = {
         "en": "Error wirting into: {e}"
     },
     "env_error": {
-        "ru": "CRUD_URL не задан",
-        "en": "CRUD_URL is not set"
+        "ru": "URL не задан",
+        "en": "URL is not set"
     },
     "host_error": {
         "ru": "Ошибка регистрации хоста: {err}",
@@ -206,12 +206,12 @@ def main():
         raise ValueError(t("env_error"))
 
     base_url = base_url.rstrip("/")
-    crud_url = base_url + "/crud/api/v1/internal"
+    base_url = base_url + "/api/v1"
 
     with tqdm(total=1, desc=t("progress_host")) as host_bar:
         try:
             ip = get_ip()
-            host_id = register_host(crud_url, headers, ip)
+            host_id = register_host(base_url, headers, ip)
             save_config(base_url, ip)
 
         except Exception as e:
@@ -226,7 +226,7 @@ def main():
     with tqdm(total=len(real_users), desc=t("progress_users")) as user_bar:
         for user in real_users:
             try:
-                register_user(crud_url, headers, user, host_id)
+                register_user(base_url, headers, user, host_id)
             except requests.exceptions.RequestException as e:
                 logging.error(t("network_error", name=user.pw_name, err=e))
             finally:

@@ -17,8 +17,8 @@ LANG = get_lang()
 
 MESSAGES = {
     "env_error": {
-        "ru": "CRUD_URL не задан",
-        "en": "CRUD_URL is not set"
+        "ru": "URL не задан",
+        "en": "URL is not set"
     },
     "host_not_found": {
         "ru": "Хост не найден",
@@ -163,7 +163,7 @@ def main():
         raise ValueError(t("env_error"))
 
     base_url = base_url.rstrip("/")
-    base_url = base_url + "/crud/api/v1/internal"
+    base_url = base_url + "/api/v1"
 
     try:
         ip = get_ip()
