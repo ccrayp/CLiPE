@@ -75,7 +75,7 @@ export function DashboardPage() {
       />
 
       {error ? (
-        <Alert variant="danger" className="mb-4">
+        <Alert variant="danger" className="mb-4" dismissible>
           {error}
         </Alert>
       ) : null}

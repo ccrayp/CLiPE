@@ -158,7 +158,7 @@ export function EntityFormModal({
         </Modal.Header>
         <Form onSubmit={handleSubmit}>
           <Modal.Body>
-            {formError ? <Alert variant="danger">{formError}</Alert> : null}
+            {formError ? <Alert variant="danger" dismissible>{formError}</Alert> : null}
             <Stack gap={3}>
               {config.formFields.map((field) => (
                 <div key={field.name}>

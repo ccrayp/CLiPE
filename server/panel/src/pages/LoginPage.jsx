@@ -40,7 +40,7 @@ export function LoginPage() {
           <Card.Body className="p-4 p-md-5">
             <h1 className="h2 fw-bold text-dark mb-3">Вход</h1>
 
-            {error ? <Alert variant="danger">{error}</Alert> : null}
+            {error ? <Alert variant="danger" dismissible>{error}</Alert> : null}
 
             <Form onSubmit={handleSubmit}>
               <Form.Group className="mb-3" controlId="username">

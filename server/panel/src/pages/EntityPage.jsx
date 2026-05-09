@@ -338,8 +338,8 @@ export function EntityPage({ config }) {
         }
       />
 
-      {error ? <Alert variant="danger">{error}</Alert> : null}
-      {success ? <Alert variant="success">{success}</Alert> : null}
+      {error ? <Alert variant="danger" dismissible>{error}</Alert> : null}
+      {success ? <Alert variant="success" dismissible>{success}</Alert> : null}
 
       <SearchPanel
         fields={config.filters}
