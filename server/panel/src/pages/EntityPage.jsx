@@ -10,6 +10,7 @@ import { EntityFormModal } from '../components/common/EntityFormModal'
 import { JsonViewerModal } from '../components/common/JsonViewerModal'
 import { PageHeader } from '../components/common/PageHeader'
 import { SearchPanel } from '../components/common/SearchPanel'
+import { IoMdAdd } from "react-icons/io";
 
 const DEFAULT_PAGE_SIZE = 10
 const SEARCH_DEBOUNCE_MS = 350
@@ -332,7 +333,7 @@ export function EntityPage({ config }) {
                 })
               }
             >
-              Создать запись
+              <IoMdAdd className='me-2'/>Создать запись
             </Button>
           ) : null
         }

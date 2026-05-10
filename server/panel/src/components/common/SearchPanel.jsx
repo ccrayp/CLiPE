@@ -1,4 +1,6 @@
 import { Button, Card, Col, Form, Row } from 'react-bootstrap'
+import { TfiReload } from "react-icons/tfi";
+
 
 function renderOptions(field, optionsMap) {
   const options = optionsMap[field.source] ?? []
@@ -55,7 +57,7 @@ export function SearchPanel({ fields, value, onChange, onReset, optionsMap }) {
           ))}
           <Col xs={12} className="d-flex justify-content-end">
             <Button variant="outline-secondary" onClick={onReset}>
-              Сбросить фильтры
+              <TfiReload className='me-2'/>Сбросить фильтры
             </Button>
           </Col>
         </Row>

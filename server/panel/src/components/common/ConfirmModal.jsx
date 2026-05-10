@@ -1,4 +1,7 @@
 import { Button, Modal } from 'react-bootstrap'
+import { FaArrowRightFromBracket } from "react-icons/fa6";
+import { FaCheck } from "react-icons/fa";
+
 
 export function ConfirmModal({
   show,
@@ -17,10 +20,10 @@ export function ConfirmModal({
       <Modal.Body>{body}</Modal.Body>
       <Modal.Footer>
         <Button variant="outline-secondary" onClick={onHide} disabled={busy}>
-          Отмена
+          <FaArrowRightFromBracket className='me-2'/>Отмена
         </Button>
         <Button variant="danger" onClick={onConfirm} disabled={busy}>
-          {confirmLabel}
+          <FaCheck className='me-2'/>{confirmLabel}
         </Button>
       </Modal.Footer>
     </Modal>

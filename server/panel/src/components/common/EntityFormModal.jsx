@@ -4,6 +4,9 @@ import { Alert, Button, Form, Modal, Stack } from 'react-bootstrap'
 import { JsonCodeEditor } from './JsonCodeEditor'
 import { JsonViewerModal } from './JsonViewerModal'
 import { RuleHelpModal } from './RuleHelpModal'
+import { MdDeleteOutline } from "react-icons/md";
+import { FaArrowRightFromBracket } from "react-icons/fa6";
+import { FiSave } from "react-icons/fi";
 
 function toFieldValue(field, record) {
   const rawValue = record?.[field.name]
@@ -223,16 +226,16 @@ export function EntityFormModal({
             <div>
               {record && onDelete ? (
                 <Button variant="outline-danger" onClick={onDelete} disabled={busy}>
-                  Удалить
+                  <MdDeleteOutline className='me-2'/>Удалить
                 </Button>
               ) : null}
             </div>
             <div className="d-flex gap-2">
               <Button variant="outline-secondary" onClick={onHide} disabled={busy}>
-                Закрыть
+                <FaArrowRightFromBracket className='me-2'/>Закрыть
               </Button>
               <Button type="submit" disabled={busy}>
-                {mode === 'create' ? 'Создать' : 'Сохранить'}
+                <FiSave className='me-2'/>{mode === 'create' ? 'Создать' : 'Сохранить'}
               </Button>
             </div>
           </Modal.Footer>

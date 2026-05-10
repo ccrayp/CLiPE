@@ -67,7 +67,7 @@ export function DashboardPage() {
         description="Оперативный обзор основных сущностей, журналов и состояния административного контура CLiPE."
         actions={
           <div className="d-flex justify-content-lg-end">
-            <Button as={Link} to="/policies" variant="dark">
+            <Button as={Link} to="/policies" variant="primary">
               Перейти к политикам
             </Button>
           </div>
@@ -94,7 +94,7 @@ export function DashboardPage() {
                   <div className="metric-value">
                     {loading ? '...' : metrics[config.key] ?? 0}
                   </div>
-                  <Button as={Link} to={`/${config.route}`} variant="outline-dark" size="sm">
+                  <Button as={Link} to={`/${config.route}`} variant="outline-primary" size="sm">
                     Открыть
                   </Button>
                 </div>

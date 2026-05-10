@@ -73,13 +73,15 @@ export function AppLayout({ children }) {
           <div className="d-flex align-items-center gap-3">
             <Button
               className="floating-menu-button"
-              variant="outline-secondary"
+              variant="outline-primary"
               onClick={() => setShowMenu(true)}
             >
               Меню
             </Button>
             <Navbar.Brand className="fw-semibold text-dark mb-0">
-              Панель управления CLiPE
+              <NavLink to="/">
+                Панель управления CLiPE
+              </NavLink>
             </Navbar.Brand>
           </div>
           <div className="d-flex align-items-center gap-3 ms-auto">
@@ -87,7 +89,7 @@ export function AppLayout({ children }) {
               <div className="small text-muted">Пользователь</div>
               <div className="fw-semibold">{session?.username ?? 'admin'}</div>
             </div>
-            <Button variant="outline-secondary" onClick={logout}>
+            <Button variant="outline-danger" onClick={logout}>
               Выйти
             </Button>
           </div>
