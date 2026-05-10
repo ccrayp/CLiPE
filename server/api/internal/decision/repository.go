@@ -35,7 +35,7 @@ func (r *DecisionRepository) Select(filter *SearchDecisionDTO, limit int, offset
 		}
 	}
 
-	if err := query.Find(&decisions).Error; err != nil {
+	if err := query.Order("decision_id DESC").Find(&decisions).Error; err != nil {
 		return nil, err
 	}
 

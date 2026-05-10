@@ -86,14 +86,14 @@ func (h *RequestHandler) Create(ctx *gin.Context) {
 		return
 	}
 
-	if h.debug_ {
-		fmt.Printf("Request: %v\n", dto)
-	}
-
 	id, err := h.repository_.Create(&dto)
 	if err != nil {
 		utils.RespondError(ctx, http.StatusInternalServerError, nil, err.Error())
 		return
+	}
+
+	if h.debug_ {
+		fmt.Printf("new request: %d\n", *id)
 	}
 
 	utils.RespondSuccess(ctx, http.StatusCreated, nil, gin.H{
@@ -102,10 +102,6 @@ func (h *RequestHandler) Create(ctx *gin.Context) {
 }
 
 func (h *RequestHandler) Update(ctx *gin.Context) {
-
-	if auth.Require(ctx, auth.User) == nil {
-		return
-	}
 
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
@@ -133,10 +129,6 @@ func (h *RequestHandler) Update(ctx *gin.Context) {
 }
 
 func (h *RequestHandler) Delete(ctx *gin.Context) {
-
-	if auth.Require(ctx, auth.User) == nil {
-		return
-	}
 
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {

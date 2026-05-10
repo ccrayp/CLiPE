@@ -4,6 +4,7 @@ import (
 	"clipe/internal/auth"
 	"clipe/pkg/utils"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -92,16 +93,16 @@ func (h *DecisionHandler) Create(ctx *gin.Context) {
 		return
 	}
 
+	if h.debug_ {
+		fmt.Printf("new decision: %d\n", *id)
+	}
+
 	utils.RespondSuccess(ctx, http.StatusCreated, nil, gin.H{
 		"id": id,
 	})
 }
 
 func (h *DecisionHandler) Update(ctx *gin.Context) {
-
-	if auth.Require(ctx, auth.User) == nil {
-		return
-	}
 
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
@@ -129,10 +130,6 @@ func (h *DecisionHandler) Update(ctx *gin.Context) {
 }
 
 func (h *DecisionHandler) Delete(ctx *gin.Context) {
-
-	if auth.Require(ctx, auth.User) == nil {
-		return
-	}
 
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {

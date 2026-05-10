@@ -32,7 +32,7 @@ func (r *RequestRepository) Select(filter *RequestDTO, limit int, offset int) ([
 		}
 	}
 
-	if err := query.Find(&requests).Error; err != nil {
+	if err := query.Order("request_id DESC").Find(&requests).Error; err != nil {
 		return nil, err
 	}
 
