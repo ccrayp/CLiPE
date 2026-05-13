@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react'
-import { Alert, Badge, Button, Card, Col, Row } from 'react-bootstrap'
+import { Badge, Button, Card, Col, Row } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
 import { apiMap } from '../api'
 import { getApiErrorMessage } from '../api/http'
 import { PageHeader } from '../components/common/PageHeader'
 import { entityConfigs } from '../config/entities'
 import { formatDateTime } from '../utils/formatters'
+import Notification from '../components/common/Notification'
 
 export function DashboardPage() {
   const [metrics, setMetrics] = useState({})
@@ -75,9 +76,9 @@ export function DashboardPage() {
       />
 
       {error ? (
-        <Alert variant="danger" className="mb-4" dismissible>
+        <Notification variant="danger" className="mb-4" dismissible>
           {error}
-        </Alert>
+        </Notification>
       ) : null}
 
       <Row className="g-4 mb-4">

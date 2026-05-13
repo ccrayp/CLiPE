@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Alert, Button } from 'react-bootstrap'
+import { Button } from 'react-bootstrap'
 import { useSearchParams } from 'react-router-dom'
 import { apiMap } from '../api'
 import { getApiErrorMessage } from '../api/http'
@@ -11,6 +11,7 @@ import { JsonViewerModal } from '../components/common/JsonViewerModal'
 import { PageHeader } from '../components/common/PageHeader'
 import { SearchPanel } from '../components/common/SearchPanel'
 import { IoMdAdd } from "react-icons/io";
+import Notification from '../components/common/Notification'
 
 const DEFAULT_PAGE_SIZE = 10
 const SEARCH_DEBOUNCE_MS = 350
@@ -339,8 +340,8 @@ export function EntityPage({ config }) {
         }
       />
 
-      {error ? <Alert variant="danger" dismissible>{error}</Alert> : null}
-      {success ? <Alert variant="success" dismissible>{success}</Alert> : null}
+      {error ? <Notification variant="danger" dismissible>{error}</Notification> : null}
+      {success ? <Notification variant="success" dismissible>{success}</Notification> : null}
 
       <SearchPanel
         fields={config.filters}

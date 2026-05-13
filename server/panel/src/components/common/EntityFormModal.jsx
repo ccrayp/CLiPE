@@ -1,12 +1,13 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 import { useEffect, useMemo, useState } from 'react'
-import { Alert, Button, Form, Modal, Stack } from 'react-bootstrap'
+import { Button, Form, Modal, Stack } from 'react-bootstrap'
 import { JsonCodeEditor } from './JsonCodeEditor'
 import { JsonViewerModal } from './JsonViewerModal'
 import { RuleHelpModal } from './RuleHelpModal'
 import { MdDeleteOutline } from "react-icons/md";
 import { FaArrowRightFromBracket } from "react-icons/fa6";
 import { FiSave } from "react-icons/fi";
+import Notification from './Notification'
 
 function toFieldValue(field, record) {
   const rawValue = record?.[field.name]
@@ -161,7 +162,7 @@ export function EntityFormModal({
         </Modal.Header>
         <Form onSubmit={handleSubmit}>
           <Modal.Body>
-            {formError ? <Alert variant="danger" dismissible>{formError}</Alert> : null}
+            {formError ? <Notification variant="danger" dismissible>{formError}</Notification> : null}
             <Stack gap={3}>
               {config.formFields.map((field) => (
                 <div key={field.name}>

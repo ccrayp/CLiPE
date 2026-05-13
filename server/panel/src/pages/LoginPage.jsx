@@ -1,8 +1,9 @@
 import { useState } from 'react'
-import { Alert, Button, Card, Container, Form } from 'react-bootstrap'
+import { Button, Card, Container, Form } from 'react-bootstrap'
 import { Navigate, useNavigate } from 'react-router-dom'
 import { useAuth } from '../auth/AuthContext'
 import { getApiErrorMessage } from '../api/http'
+import Notification from '../components/common/Notification'
 
 export function LoginPage() {
   const navigate = useNavigate()
@@ -40,7 +41,7 @@ export function LoginPage() {
           <Card.Body className="p-4 p-md-5">
             <h1 className="h2 fw-bold text-dark mb-3">Вход</h1>
 
-            {error ? <Alert variant="danger" dismissible>{error}</Alert> : null}
+            {error ? <Notification variant="danger" dismissible>{error}</Notification> : null}
 
             <Form onSubmit={handleSubmit}>
               <Form.Group className="mb-3" controlId="username">
