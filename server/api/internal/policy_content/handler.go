@@ -29,13 +29,13 @@ func (h *PolicyContentHandler) Filter(ctx *gin.Context) {
 
 	limit, err := strconv.Atoi(ctx.Query("limit"))
 	if err != nil {
-		utils.RespondError(ctx, http.StatusBadRequest, "invalid limit", err.Error())
+		utils.RespondError(ctx, http.StatusBadRequest, "Неверный лимит", "Неверный лимит")
 		return
 	}
 
 	offset, err := strconv.Atoi(ctx.Query("offset"))
 	if err != nil {
-		utils.RespondError(ctx, http.StatusBadRequest, "invalid offset", err.Error())
+		utils.RespondError(ctx, http.StatusBadRequest, "Неверный сдвиг", "Неверный сдвиг")
 		return
 	}
 
@@ -45,19 +45,19 @@ func (h *PolicyContentHandler) Filter(ctx *gin.Context) {
 	decoder.DisallowUnknownFields()
 
 	if err := decoder.Decode(&filter); err != nil {
-		utils.RespondError(ctx, http.StatusBadRequest, "invalid body", err.Error())
+		utils.RespondError(ctx, http.StatusBadRequest, "Неверные параметры запроса", "Неверные параметры запроса")
 		return
 	}
 
 	data, err := h.repository_.Select(&filter, limit, offset)
 	if err != nil {
-		utils.RespondError(ctx, http.StatusInternalServerError, nil, err.Error())
+		utils.RespondError(ctx, http.StatusInternalServerError, nil, "Ошибка при запросе данных")
 		return
 	}
 
 	count, err := h.repository_.Count()
 	if err != nil {
-		utils.RespondError(ctx, http.StatusInternalServerError, "error while get count", err.Error())
+		utils.RespondError(ctx, http.StatusInternalServerError, "Ошибка при подсчёте результатов", "Ошибка при подсчёте результатов")
 		return
 	}
 
@@ -80,12 +80,12 @@ func (h *PolicyContentHandler) Create(ctx *gin.Context) {
 	decoder.DisallowUnknownFields()
 
 	if err := decoder.Decode(&dto); err != nil {
-		utils.RespondError(ctx, http.StatusBadRequest, "invalid body", err.Error())
+		utils.RespondError(ctx, http.StatusBadRequest, "Неверные параметры запроса", "Неверные параметры запроса")
 		return
 	}
 
 	if err := h.repository_.Create(&dto); err != nil {
-		utils.RespondError(ctx, http.StatusInternalServerError, nil, err.Error())
+		utils.RespondError(ctx, http.StatusInternalServerError, nil, "Ошибка при создании записи")
 		return
 	}
 
@@ -99,13 +99,13 @@ func (h *PolicyContentHandler) Update(ctx *gin.Context) {
 
 	policyID, err := strconv.Atoi(ctx.Param("policy_id"))
 	if err != nil {
-		utils.RespondError(ctx, http.StatusBadRequest, "invalid policy_id", err.Error())
+		utils.RespondError(ctx, http.StatusBadRequest, "Неверный идентификатор политики", "Неверный идентификатор политики")
 		return
 	}
 
 	serviceID, err := strconv.Atoi(ctx.Param("service_id"))
 	if err != nil {
-		utils.RespondError(ctx, http.StatusBadRequest, "invalid service_id", err.Error())
+		utils.RespondError(ctx, http.StatusBadRequest, "Неверный идентификатор сервиса", "Неверный идентификатор сервиса")
 		return
 	}
 
@@ -115,7 +115,7 @@ func (h *PolicyContentHandler) Update(ctx *gin.Context) {
 	decoder.DisallowUnknownFields()
 
 	if err := decoder.Decode(&dto); err != nil {
-		utils.RespondError(ctx, http.StatusBadRequest, "invalid body", err.Error())
+		utils.RespondError(ctx, http.StatusBadRequest, "Неверные параметры запроса", "Неверные параметры запроса")
 		return
 	}
 
@@ -123,7 +123,7 @@ func (h *PolicyContentHandler) Update(ctx *gin.Context) {
 	dto.ServiceID = uint(serviceID)
 
 	if err := h.repository_.Update(uint(policyID), uint(serviceID), &dto); err != nil {
-		utils.RespondError(ctx, http.StatusInternalServerError, nil, err.Error())
+		utils.RespondError(ctx, http.StatusInternalServerError, nil, "Ошибка при обновлении записи")
 		return
 	}
 
@@ -137,18 +137,18 @@ func (h *PolicyContentHandler) Delete(ctx *gin.Context) {
 
 	policyID, err := strconv.Atoi(ctx.Param("policy_id"))
 	if err != nil {
-		utils.RespondError(ctx, http.StatusBadRequest, "invalid policy_id", err.Error())
+		utils.RespondError(ctx, http.StatusBadRequest, "Неверный идентификатор политики", "Неверный идентификатор политики")
 		return
 	}
 
 	serviceID, err := strconv.Atoi(ctx.Param("service_id"))
 	if err != nil {
-		utils.RespondError(ctx, http.StatusBadRequest, "invalid service_id", err.Error())
+		utils.RespondError(ctx, http.StatusBadRequest, "Неверный идентификатор сервиса", "Неверный идентификатор сервиса")
 		return
 	}
 
 	if err := h.repository_.Delete(uint(policyID), uint(serviceID)); err != nil {
-		utils.RespondError(ctx, http.StatusInternalServerError, nil, err.Error())
+		utils.RespondError(ctx, http.StatusInternalServerError, nil, "Ошибка при удалении записи")
 		return
 	}
 

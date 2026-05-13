@@ -31,13 +31,13 @@ func (h *HostHandler) Filter(ctx *gin.Context) {
 
 	limit, err := strconv.Atoi(ctx.Query("limit"))
 	if err != nil {
-		utils.RespondError(ctx, http.StatusBadRequest, "invalid limit", err.Error())
+		utils.RespondError(ctx, http.StatusBadRequest, "Неверный лимит", "Неверный лимит")
 		return
 	}
 
 	offset, err := strconv.Atoi(ctx.Query("offset"))
 	if err != nil {
-		utils.RespondError(ctx, http.StatusBadRequest, "invalid offset", err.Error())
+		utils.RespondError(ctx, http.StatusBadRequest, "Неверный сдвиг", "Неверный сдвиг")
 		return
 	}
 
@@ -46,19 +46,19 @@ func (h *HostHandler) Filter(ctx *gin.Context) {
 	decoder.DisallowUnknownFields()
 
 	if err := decoder.Decode(&filter); err != nil {
-		utils.RespondError(ctx, http.StatusBadRequest, "invalid body", err.Error())
+		utils.RespondError(ctx, http.StatusBadRequest, "Неверные параметры запроса", "Неверные параметры запроса")
 		return
 	}
 
 	data, err := h.repository_.Select(&filter, limit, offset)
 	if err != nil {
-		utils.RespondError(ctx, http.StatusInternalServerError, nil, err.Error())
+		utils.RespondError(ctx, http.StatusInternalServerError, nil, "Ошибка при запросе данных")
 		return
 	}
 
 	count, err := h.repository_.Count()
 	if err != nil {
-		utils.RespondError(ctx, http.StatusInternalServerError, "error while get count", err.Error())
+		utils.RespondError(ctx, http.StatusInternalServerError, "Ошибка при подсчёте результатов", "Ошибка при подсчёте результатов")
 		return
 	}
 
@@ -82,18 +82,18 @@ func (h *HostHandler) Create(ctx *gin.Context) {
 	decoder.DisallowUnknownFields()
 
 	if err := decoder.Decode(&dto); err != nil {
-		utils.RespondError(ctx, http.StatusBadRequest, "invalid body", err.Error())
+		utils.RespondError(ctx, http.StatusBadRequest, "Неверные параметры запроса", "Неверные параметры запроса")
+		return
+	}
+
+	if net.ParseIP(dto.IP) == nil {
+		utils.RespondError(ctx, http.StatusBadRequest, "Неверный IP", "Неверный IP")
 		return
 	}
 
 	id, err := h.repository_.Create(&dto)
 	if err != nil {
-		utils.RespondError(ctx, http.StatusInternalServerError, nil, err.Error())
-		return
-	}
-
-	if net.ParseIP(dto.IP) == nil {
-		utils.RespondError(ctx, http.StatusBadRequest, "invalid ip", "invalid ip")
+		utils.RespondError(ctx, http.StatusInternalServerError, nil, "Ошибка при создании записи")
 		return
 	}
 
@@ -110,7 +110,7 @@ func (h *HostHandler) Update(ctx *gin.Context) {
 
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
-		utils.RespondError(ctx, http.StatusBadRequest, "invalid id", err.Error())
+		utils.RespondError(ctx, http.StatusBadRequest, "Неверный идентификатор", "Неверный идентификатор")
 		return
 	}
 
@@ -120,18 +120,18 @@ func (h *HostHandler) Update(ctx *gin.Context) {
 	decoder.DisallowUnknownFields()
 
 	if err := decoder.Decode(&dto); err != nil {
-		utils.RespondError(ctx, http.StatusBadRequest, "invalid body", err.Error())
+		utils.RespondError(ctx, http.StatusBadRequest, "Неверные параметры запроса", "Неверные параметры запроса")
 		return
 	}
 
 	if net.ParseIP(dto.IP) == nil {
-		utils.RespondError(ctx, http.StatusBadRequest, "invalid ip", "invalid ip")
+		utils.RespondError(ctx, http.StatusBadRequest, "Неверный IP", "Неверный IP")
 		return
 	}
 
 	err = h.repository_.Update(uint(id), &dto)
 	if err != nil {
-		utils.RespondError(ctx, http.StatusInternalServerError, nil, err.Error())
+		utils.RespondError(ctx, http.StatusInternalServerError, nil, "Ошибка при обновлении записи")
 		return
 	}
 
@@ -146,13 +146,13 @@ func (h *HostHandler) Delete(ctx *gin.Context) {
 
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
-		utils.RespondError(ctx, http.StatusBadRequest, "invalid id", err.Error())
+		utils.RespondError(ctx, http.StatusBadRequest, "Неверный идентификатор", "Неверный идентификатор")
 		return
 	}
 
 	err = h.repository_.Delete(uint(id))
 	if err != nil {
-		utils.RespondError(ctx, http.StatusInternalServerError, nil, err.Error())
+		utils.RespondError(ctx, http.StatusInternalServerError, nil, "Ошибка при удалении записи")
 		return
 	}
 

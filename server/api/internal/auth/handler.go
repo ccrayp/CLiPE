@@ -28,12 +28,12 @@ func (h *Handler) Login(ctx *gin.Context) {
 
 	user, err := h.repo.GetUserByUsername(req.Username)
 	if err != nil {
-		utils.RespondError(ctx, http.StatusUnauthorized, "wrong login or password", "wrong login or password")
+		utils.RespondError(ctx, http.StatusUnauthorized, "Неверный логин или пароль", "Неверный логин или пароль")
 		return
 	}
 
 	if !CheckPassword(req.Password, user.Password) {
-		utils.RespondError(ctx, http.StatusUnauthorized, "wrong login or password", "wrong login or password")
+		utils.RespondError(ctx, http.StatusUnauthorized, "Неверный логин или пароль", "Неверный логин или пароль")
 		return
 	}
 
@@ -49,7 +49,7 @@ func (h *Handler) Login(ctx *gin.Context) {
 		return
 	}
 
-	utils.RespondSuccess(ctx, http.StatusOK, "login success", gin.H{
+	utils.RespondSuccess(ctx, http.StatusOK, "Успешный вход в систему", gin.H{
 		"access_token":  accessToken,
 		"refresh_token": refreshToken,
 	})
@@ -65,11 +65,11 @@ func (h *Handler) Refresh(ctx *gin.Context) {
 
 	accessToken, refreshToken, err := RefreshAccessToken(h.repo, req.RefreshToken)
 	if err != nil {
-		utils.RespondError(ctx, http.StatusUnauthorized, "invalid refresh token", "invalid refresh token")
+		utils.RespondError(ctx, http.StatusUnauthorized, "Неверный токен обновления", "Неверный токен обновления")
 		return
 	}
 
-	utils.RespondSuccess(ctx, http.StatusOK, "successfully refreshed", gin.H{
+	utils.RespondSuccess(ctx, http.StatusOK, "Токены успешно обновлены", gin.H{
 		"access_token":  accessToken,
 		"refresh_token": refreshToken,
 	})
@@ -84,44 +84,44 @@ func (h *Handler) Logout(ctx *gin.Context) {
 	}
 
 	if req.RefreshToken == "" {
-		utils.RespondError(ctx, http.StatusBadRequest, "refresh token required", "refresh token required")
+		utils.RespondError(ctx, http.StatusBadRequest, "Необходим токен обновления", "Необходим токен обновления")
 		return
 	}
 
 	token, err := h.repo.GetRefreshToken(req.RefreshToken)
 	if err != nil {
-		utils.RespondError(ctx, http.StatusInternalServerError, "error while token existing checking", err.Error())
+		utils.RespondError(ctx, http.StatusInternalServerError, "Ошибка при проверке существования токена", err.Error())
 		return
 	}
 
 	if token == nil {
-		utils.RespondError(ctx, http.StatusInternalServerError, "token was not found", "token was not found")
+		utils.RespondError(ctx, http.StatusInternalServerError, "Токен не был найден", "Токен не был найден")
 		return
 	}
 
 	err = h.repo.DeleteRefreshToken(req.RefreshToken)
 	if err != nil {
-		utils.RespondError(ctx, http.StatusInternalServerError, err.Error(), err.Error())
+		utils.RespondError(ctx, http.StatusInternalServerError, err.Error(), "Ошибка при удалении токена обновления")
 		return
 	}
 
-	utils.RespondSuccess(ctx, http.StatusOK, "logout success", nil)
+	utils.RespondSuccess(ctx, http.StatusOK, "Выход успешно выполнен", "Выход успешно выполнен")
 }
 
 func (h *Handler) Hash(ctx *gin.Context) {
 	password := ctx.Query("password")
 	if password == "" {
-		utils.RespondError(ctx, http.StatusBadRequest, "password query is required", "password query is required")
+		utils.RespondError(ctx, http.StatusBadRequest, "Необходим пароль в параметрах запроса", "Необходим пароль в параметрах запроса")
 		return
 	}
 
 	hash, err := utils.HashPassword(password)
 	if err != nil {
-		utils.RespondError(ctx, http.StatusInternalServerError, err.Error(), err.Error())
+		utils.RespondError(ctx, http.StatusInternalServerError, err.Error(), "Ошибка при хэшировании пароля")
 		return
 	}
 
-	utils.RespondSuccess(ctx, http.StatusOK, "password hash generated", gin.H{
+	utils.RespondSuccess(ctx, http.StatusOK, "Хэш пароля успешно создан", gin.H{
 		"password":      password,
 		"password_hash": hash,
 	})

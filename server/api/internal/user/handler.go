@@ -31,13 +31,13 @@ func (h *UserHandler) Filter(ctx *gin.Context) {
 
 	limit, err := strconv.Atoi(ctx.Query("limit"))
 	if err != nil {
-		utils.RespondError(ctx, http.StatusBadRequest, "invalid limit", err.Error())
+		utils.RespondError(ctx, http.StatusBadRequest, "Неверный лимит", "Неверный лимит")
 		return
 	}
 
 	offset, err := strconv.Atoi(ctx.Query("offset"))
 	if err != nil {
-		utils.RespondError(ctx, http.StatusBadRequest, "invalid offset", err.Error())
+		utils.RespondError(ctx, http.StatusBadRequest, "Неверный сдвиг", "Неверный сдвиг")
 		return
 	}
 
@@ -46,7 +46,7 @@ func (h *UserHandler) Filter(ctx *gin.Context) {
 	decoder.DisallowUnknownFields()
 
 	if err := decoder.Decode(&filter); err != nil {
-		utils.RespondError(ctx, http.StatusBadRequest, "invalid body", err.Error())
+		utils.RespondError(ctx, http.StatusBadRequest, "Неверные параметры запроса", "Неверные параметры запроса")
 		return
 	}
 
@@ -56,13 +56,13 @@ func (h *UserHandler) Filter(ctx *gin.Context) {
 
 	data, err := h.repository_.Select(&filter, limit, offset)
 	if err != nil {
-		utils.RespondError(ctx, http.StatusInternalServerError, nil, err.Error())
+		utils.RespondError(ctx, http.StatusInternalServerError, nil, "Ошибка при запросе данных")
 		return
 	}
 
 	count, err := h.repository_.Count()
 	if err != nil {
-		utils.RespondError(ctx, http.StatusInternalServerError, "error while get count", err.Error())
+		utils.RespondError(ctx, http.StatusInternalServerError, "Ошибка при подсчёте результатов", "Ошибка при подсчёте результатов")
 		return
 	}
 
@@ -86,13 +86,23 @@ func (h *UserHandler) Create(ctx *gin.Context) {
 	decoder.DisallowUnknownFields()
 
 	if err := decoder.Decode(&dto); err != nil {
-		utils.RespondError(ctx, http.StatusBadRequest, "invalid body", err.Error())
+		utils.RespondError(ctx, http.StatusBadRequest, "Неверные параметры запроса", "Неверные параметры запроса")
+		return
+	}
+
+	if dto.GID <= 0 || dto.UID <= 0 {
+		utils.RespondError(ctx, http.StatusBadRequest, "Неверный UID или GID (должны быть больше 0)", "Неверный UID или GID (должны быть больше 0)")
+		return
+	}
+
+	if len(dto.UserName) == 0 || len(dto.UserName) >= 100 {
+		utils.RespondError(ctx, http.StatusBadRequest, "Неверное имя пользователя (не более 100 символов)", "Неверное имя пользователя (не более 100 символов)")
 		return
 	}
 
 	id, err := h.repository_.Create(&dto)
 	if err != nil {
-		utils.RespondError(ctx, http.StatusInternalServerError, nil, err.Error())
+		utils.RespondError(ctx, http.StatusInternalServerError, nil, "Ошибка при создании записи")
 		return
 	}
 
@@ -109,7 +119,7 @@ func (h *UserHandler) Update(ctx *gin.Context) {
 
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
-		utils.RespondError(ctx, http.StatusBadRequest, "invalid id", err.Error())
+		utils.RespondError(ctx, http.StatusBadRequest, "Неверный идентификатор", "Неверный идентификатор")
 		return
 	}
 
@@ -119,13 +129,23 @@ func (h *UserHandler) Update(ctx *gin.Context) {
 	decoder.DisallowUnknownFields()
 
 	if err := decoder.Decode(&dto); err != nil {
-		utils.RespondError(ctx, http.StatusBadRequest, "invalid body", err.Error())
+		utils.RespondError(ctx, http.StatusBadRequest, "Неверные параметры запроса", "Неверные параметры запроса")
+		return
+	}
+
+	if dto.GID <= 0 || dto.UID <= 0 {
+		utils.RespondError(ctx, http.StatusBadRequest, "Неверный UID или GID (должны быть больше 0)", "Неверный UID или GID (должны быть больше 0)")
+		return
+	}
+
+	if len(dto.UserName) == 0 || len(dto.UserName) >= 100 {
+		utils.RespondError(ctx, http.StatusBadRequest, "Неверное имя пользователя (не более 100 символов)", "Неверное имя пользователя (не более 100 символов)")
 		return
 	}
 
 	err = h.repository_.Update(uint(id), &dto)
 	if err != nil {
-		utils.RespondError(ctx, http.StatusInternalServerError, nil, err.Error())
+		utils.RespondError(ctx, http.StatusInternalServerError, nil, "Ошибка при обновлении записи")
 		return
 	}
 
@@ -140,13 +160,13 @@ func (h *UserHandler) Delete(ctx *gin.Context) {
 
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
-		utils.RespondError(ctx, http.StatusBadRequest, "invalid id", err.Error())
+		utils.RespondError(ctx, http.StatusBadRequest, "Неверный идентификатор", "Неверный идентификатор")
 		return
 	}
 
 	err = h.repository_.Delete(uint(id))
 	if err != nil {
-		utils.RespondError(ctx, http.StatusInternalServerError, nil, err.Error())
+		utils.RespondError(ctx, http.StatusInternalServerError, nil, "Ошибка при удалении записи")
 		return
 	}
 

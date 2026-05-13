@@ -27,7 +27,7 @@ func (r *RequestRepository) Select(filter *RequestDTO, limit int, offset int) ([
 			query = query.Where("request_id = ?", filter.RequestID)
 		}
 
-		if filter.UserID != 0 {
+		if filter.UserID != nil {
 			query = query.Where("user_id = ?", filter.UserID)
 		}
 	}
