@@ -79,4 +79,18 @@ CREATE TABLE sys_users (
 	password_hash CHAR(60) NOT NULL
 )
 
+
 INSERT INTO sys_users VALUES (DEFAULT, 'admin', '$2a$10$sTQ8Zx0/KbfuvEn2JhbLjOPn5XEO5iHgxnQpKBE11RQaAvUkkiW9a')
+
+
+CREATE EXTENSION IF NOT EXISTS pg_trgm;
+
+CREATE INDEX idx_rules_rule_name_trgm ON rules USING GIN (rule_name gin_trgm_ops);
+CREATE INDEX idx_users_user_name_trgm ON users USING GIN (user_name gin_trgm_ops);
+CREATE INDEX idx_services_service_name_trgm ON services USING GIN (service_name gin_trgm_ops);
+CREATE INDEX idx_policies_policy_name_trgm ON policies USING GIN (policy_name gin_trgm_ops);
+
+-- SELECT 
+--     *
+-- FROM rules
+-- WHERE similarity(rule_name, 'wa') > 0.1
