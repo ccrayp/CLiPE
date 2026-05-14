@@ -90,13 +90,13 @@ func (h *UserHandler) Create(ctx *gin.Context) {
 		return
 	}
 
-	if dto.GID <= 0 || dto.UID <= 0 {
-		utils.RespondError(ctx, http.StatusBadRequest, "Неверный UID или GID (должны быть больше 0)", "Неверный UID или GID (должны быть больше 0)")
+	if len(dto.UserName) == 0 || len(dto.UserName) >= 100 {
+		utils.RespondError(ctx, http.StatusBadRequest, "Неверное имя пользователя (не более 100 символов)", "Неверное имя пользователя (не более 100 символов)")
 		return
 	}
 
-	if len(dto.UserName) == 0 || len(dto.UserName) >= 100 {
-		utils.RespondError(ctx, http.StatusBadRequest, "Неверное имя пользователя (не более 100 символов)", "Неверное имя пользователя (не более 100 символов)")
+	if dto.GID <= 0 || dto.UID <= 0 {
+		utils.RespondError(ctx, http.StatusBadRequest, "Неверный UID или GID (должны быть больше 0)", "Неверный UID или GID (должны быть больше 0)")
 		return
 	}
 
@@ -133,13 +133,13 @@ func (h *UserHandler) Update(ctx *gin.Context) {
 		return
 	}
 
-	if dto.GID <= 0 || dto.UID <= 0 {
-		utils.RespondError(ctx, http.StatusBadRequest, "Неверный UID или GID (должны быть больше 0)", "Неверный UID или GID (должны быть больше 0)")
+	if len(dto.UserName) == 0 || len(dto.UserName) >= 100 {
+		utils.RespondError(ctx, http.StatusBadRequest, "Неверное имя пользователя (не более 100 символов)", "Неверное имя пользователя (не более 100 символов)")
 		return
 	}
 
-	if len(dto.UserName) == 0 || len(dto.UserName) >= 100 {
-		utils.RespondError(ctx, http.StatusBadRequest, "Неверное имя пользователя (не более 100 символов)", "Неверное имя пользователя (не более 100 символов)")
+	if dto.GID <= 0 || dto.UID <= 0 {
+		utils.RespondError(ctx, http.StatusBadRequest, "Неверный UID или GID (должны быть больше 0)", "Неверный UID или GID (должны быть больше 0)")
 		return
 	}
 

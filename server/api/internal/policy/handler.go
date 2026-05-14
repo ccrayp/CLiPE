@@ -123,13 +123,13 @@ func (h *PolicyHandler) Update(ctx *gin.Context) {
 	decoder := json.NewDecoder(ctx.Request.Body)
 	decoder.DisallowUnknownFields()
 
-	if len(policy.PolicyName) <= 0 || len(policy.PolicyName) > 100 {
-		utils.RespondError(ctx, http.StatusBadRequest, "Неверная длина названия политики (не более 100 символов)", "Неверная длина названия политики (не более 100 символов)")
+	if err := decoder.Decode(&policy); err != nil {
+		utils.RespondError(ctx, http.StatusBadRequest, "Неверные параметры запроса", "Неверные параметры запроса")
 		return
 	}
 
-	if err := decoder.Decode(&policy); err != nil {
-		utils.RespondError(ctx, http.StatusBadRequest, "Неверные параметры запроса", "Неверные параметры запроса")
+	if len(policy.PolicyName) <= 0 || len(policy.PolicyName) > 100 {
+		utils.RespondError(ctx, http.StatusBadRequest, "Неверное название политики (не более 100 символов)", "Неверное название политики (не более 100 символов)")
 		return
 	}
 
