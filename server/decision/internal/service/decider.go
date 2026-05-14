@@ -28,7 +28,7 @@ func (d *Decider) Fallback(response *model.PolicyMatchResponse, request *model.A
 		return nil, fmt.Errorf("error in CreateRequest: %s", err.Error())
 	}
 
-	decisionId, err := d.client.CreateFallbackDecision(requestId, false)
+	decisionId, err := d.client.CreateFallbackDecision(requestId, d.defaultDecision)
 	if err != nil {
 		return nil, fmt.Errorf("error in CreateDecision: %s", err.Error())
 	}
@@ -122,7 +122,7 @@ func (d *Decider) ApplyRule(req *model.ApiRequest, rule *model.Rule) (bool, erro
 		}
 
 		if !res {
-			return false, nil
+			return !rule.Effect, nil
 		}
 
 	}
@@ -275,17 +275,27 @@ func (d *Decider) CheckTimestamp(req *model.ApiRequest, cond *model.Condition) (
 		return false, err
 	}
 
-	nowUTC := req.Time.Timestamp
-	loc, err := time.LoadLocation("Europe/Moscow")
-	if err != nil {
-		loc = time.FixedZone("MSK", 3*60*60)
-	}
+	// Используем время из req.Time.Timestamp как есть, без перевода в другую timezone.
+	now := req.Time.Timestamp
 
-	nowLocal := nowUTC.In(loc)
+	// Сравниваем только часы и минуты, сохраняя ту же Location,
+	// которая уже присутствует в переданном времени.
+	loc := now.Location()
 
-	current := time.Date(0, 0, 0, nowLocal.Hour(), nowLocal.Minute(), 0, 0, loc)
-	startTime := time.Date(0, 0, 0, start.Hour(), start.Minute(), 0, 0, loc)
-	endTime := time.Date(0, 0, 0, end.Hour(), end.Minute(), 0, 0, loc)
+	current := time.Date(
+		now.Year(), now.Month(), now.Day(),
+		now.Hour(), now.Minute(), 0, 0, loc,
+	)
+
+	startTime := time.Date(
+		now.Year(), now.Month(), now.Day(),
+		start.Hour(), start.Minute(), 0, 0, loc,
+	)
+
+	endTime := time.Date(
+		now.Year(), now.Month(), now.Day(),
+		end.Hour(), end.Minute(), 0, 0, loc,
+	)
 
 	switch cond.Operator {
 	case model.OpBetween:
