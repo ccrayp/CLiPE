@@ -68,8 +68,8 @@ export function DashboardPage() {
         description="Оперативный обзор основных сущностей, журналов и состояния административного контура CLiPE."
         actions={
           <div className="d-flex justify-content-lg-end">
-            <Button as={Link} to="/policies" variant="primary">
-              Перейти к политикам
+            <Button as={Link} to="/decisions" variant="primary">
+              Перейти к решениям
             </Button>
           </div>
         }

@@ -41,22 +41,19 @@ export function RuleHelpModal({ show, onHide }) {
       </Modal.Header>
       <Modal.Body>
         <p>
-          Правило состоит из массива <code>conditions</code> и поля <code>effect</code>.
+          Правило состоит из массива <code>conditions</code>.
           Все условия объединяются через <strong>AND</strong>: если хотя бы одно не
           выполняется, доступ запрещается.
         </p>
 
         <pre className="help-code-block">
-{`{
-  "conditions": [
+{`[
     {
       "type": "ip",
       "operator": "in",
       "value": "192.168.1.0/24"
     }
-  ],
-  "effect": true
-}`}
+  ]`}
         </pre>
 
         <div className="fw-semibold mb-2">Структура одного условия</div>

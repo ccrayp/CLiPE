@@ -367,7 +367,7 @@ export function EntityPage({ config }) {
 
       <DataTable
         title={config.title}
-        subtitle="Открой запись кликом по строке"
+        subtitle="Открыть запись кликом по строке"
         columns={config.columns}
         rows={rows}
         optionsMap={optionsMap}

@@ -289,7 +289,7 @@ export const entityConfigs = [
   },
   {
     key: 'policyContents',
-    title: 'Привязки политик',
+    title: 'Привязки правил',
     route: 'policy-contents',
     eyebrow: 'Управление доступом',
     description: 'Соответствия: политика → сервис → правило.',
@@ -548,7 +548,7 @@ export const entityConfigs = [
         source: 'policies',
         optionValueKey: 'policy_id',
         getOptionLabel: relationLabelBuilders.policies,
-        linkTo: (value) => `/policies?policy_id=${value}`,
+        linkTo: (value) => `/policy-contents?policy_id=${value}`,
       },
       {
         key: 'result',
@@ -579,7 +579,7 @@ export const entityConfigs = [
         source: 'policies',
         optionValueKey: 'policy_id',
         getOptionLabel: relationLabelBuilders.policies,
-        linkTo: (value) => `/policies?policy_id=${value}`,
+        linkTo: (value) => `/policy-contents?policy_id=${value}`,
       },
       {
         key: 'result',
