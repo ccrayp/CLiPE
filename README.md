@@ -377,10 +377,10 @@ sudo tail -f /var/log/auth.log
 
 **Примеры записей в релизном режиме:**
 - Разрешённый доступ: запись с меткой `ALLOW`.
-![allow](images/log_allow.png
+![allow-log](images/log_allow.png)
 
 - Запрещённый доступ: запись с меткой `DENY`.
-![deny](https://github.com/ccrayp/CLiPE/blob/main/images/log_deny.png)
+![deny-log](images/log_deny.png)
 
 **В отладочном режиме** дополнительно выводится подробная информация о запросе и ответе сервера.
 ![allow](images/log_allow_debug.png)
