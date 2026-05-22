@@ -21,14 +21,14 @@ CREATE TABLE users (
 	user_id SERIAL PRIMARY KEY,
 	user_name VARCHAR(100) NOT NULL UNIQUE, 
 	uid INT NOT NULL,
-	gid INT
+	gid INT,
 	host_id INT NOT NULL REFERENCES hosts(host_id) ON DELETE CASCADE
 );
 
 CREATE TABLE services (
 	service_id SERIAL PRIMARY KEY,
 	service_name TEXT NOT NULL UNIQUE
-)
+);
 
 CREATE TABLE rules (
 	rule_id SERIAL PRIMARY KEY,
@@ -49,12 +49,12 @@ CREATE TABLE policy_contents (
     service_id INT NOT NULL REFERENCES services(service_id) ON DELETE CASCADE,
     rule_id INT NOT NULL REFERENCES rules(rule_id) ON DELETE CASCADE,
     PRIMARY KEY (policy_id, service_id)
-)
+);
 
 CREATE TABLE requests (
 	request_id SERIAL PRIMARY KEY,
 	user_id INT REFERENCES users(user_id) ON DELETE CASCADE,
-	context JSONB NOT NULL DEFAULT '{"data": null}',
+	context JSONB NOT NULL DEFAULT '[]',
 	timestamp TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
@@ -62,7 +62,7 @@ CREATE TABLE decisions (
 	decision_id SERIAL PRIMARY KEY,
 	request_id INT NOT NULL REFERENCES requests(request_id) ON DELETE CASCADE,
 	policy_id INT REFERENCES policies(policy_id) ON DELETE CASCADE,
-	result BOOLEAN NOT NULL
+	result BOOLEAN NOT NULL,
 	timestamp TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
@@ -77,10 +77,10 @@ CREATE TABLE sys_users (
 	id SERIAL PRIMARY KEY,
 	username TEXT NOT NULL,
 	password_hash CHAR(60) NOT NULL
-)
+);
 
 
-INSERT INTO sys_users VALUES (DEFAULT, 'admin', '$2a$10$sTQ8Zx0/KbfuvEn2JhbLjOPn5XEO5iHgxnQpKBE11RQaAvUkkiW9a')
+INSERT INTO sys_users VALUES (DEFAULT, 'admin', '$2a$10$sTQ8Zx0/KbfuvEn2JhbLjOPn5XEO5iHgxnQpKBE11RQaAvUkkiW9a');
 
 
 CREATE EXTENSION IF NOT EXISTS pg_trgm;
