@@ -52,28 +52,61 @@ func (d *Decider) Evaluate(request *model.ApiRequest) (*model.Decision, error) {
 		return d.Fallback(response, request)
 	}
 
-	requestId, err := d.client.CreateRequest(response.Policy.UserID, request)
-	if err != nil {
-		return nil, fmt.Errorf("error in CreateRequest: %s", err.Error())
+	type reqRes struct {
+		id  uint
+		err error
 	}
 
-	rule, err := model.ParseRule(response.Rule)
-	if err != nil {
-		return nil, fmt.Errorf("error in ParseRule: %s", err.Error())
+	type ruleRes struct {
+		ok  bool
+		err error
 	}
 
-	result, err := d.ApplyRule(request, rule)
-	if err != nil {
-		return nil, fmt.Errorf("error in ApplyRule: %s", err.Error())
+	reqCh := make(chan reqRes, 1)
+	ruleCh := make(chan ruleRes, 1)
+
+	go func() {
+		id, err := d.client.CreateRequest(
+			response.Policy.UserID,
+			request,
+		)
+
+		reqCh <- reqRes{id: id, err: err}
+	}()
+
+	go func() {
+		rule, err := model.ParseRule(response.Rule)
+		if err != nil {
+			ruleCh <- ruleRes{err: fmt.Errorf("ParseRule: %w", err)}
+			return
+		}
+
+		ok, err := d.ApplyRule(request, rule)
+
+		ruleCh <- ruleRes{ok: ok, err: err}
+	}()
+
+	req := <-reqCh
+	if req.err != nil {
+		return nil, fmt.Errorf("CreateRequest: %w", req.err)
 	}
 
-	decisionId, err := d.client.CreateDecision(requestId, response.Policy.ID, result)
+	rule := <-ruleCh
+	if rule.err != nil {
+		return nil, fmt.Errorf("ApplyRule: %w", rule.err)
+	}
+
+	decisionID, err := d.client.CreateDecision(
+		req.id,
+		response.Policy.ID,
+		rule.ok,
+	)
 	if err != nil {
-		return nil, fmt.Errorf("error in CreateDecision: %s", err.Error())
+		return nil, fmt.Errorf("CreateDecision: %w", err)
 	}
 
 	return &model.Decision{
-		Result: result,
+		Result: rule.ok,
 		Policy: struct {
 			Id   uint
 			Name string
@@ -81,8 +114,8 @@ func (d *Decider) Evaluate(request *model.ApiRequest) (*model.Decision, error) {
 			Id:   response.Policy.ID,
 			Name: response.Policy.Name,
 		},
-		RequestId:  requestId,
-		DecisionId: decisionId,
+		RequestId:  req.id,
+		DecisionId: decisionID,
 	}, nil
 }
 
