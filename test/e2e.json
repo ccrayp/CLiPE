@@ -1,0 +1,1060 @@
+{
+  "v": 12,
+  "name": "e2e",
+  "folders": [
+    {
+      "v": 12,
+      "name": "allow",
+      "folders": [],
+      "requests": [
+        {
+          "v": "17",
+          "name": "login",
+          "method": "POST",
+          "endpoint": "<<url>>/auth/login",
+          "params": [],
+          "headers": [],
+          "preRequestScript": "",
+          "testScript": "pw.test(\"access_token exists\", () => {\n    pw.expect(pw.response.body.data.access_token).toBeType(\"string\")\n    pw.env.set(\"jwt\", pw.response.body.data.access_token)\n})\n\npw.test(\"refresh_token exists\", () => {\n    pw.expect(pw.response.body.data.refresh_token).toBeType(\"string\")\n    pw.env.set(\"refresh_token\", pw.response.body.data.refresh_token)\n})",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"username\": \"admin\",\n  \"password\": \"admin\"\n}"
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "create_host",
+          "method": "POST",
+          "endpoint": "<<url>>/hosts",
+          "params": [],
+          "headers": [
+            {
+              "key": "X-Caller",
+              "value": "<<installer_id>>",
+              "active": true,
+              "description": ""
+            },
+            {
+              "key": "X-Internal-Token",
+              "value": "<<Installer_token>>",
+              "active": true,
+              "description": ""
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "pw.test(\"status 201\", () => {\n  pw.expect(pw.response.status).toBe(201)\n  pw.env.set(\"e2e_host_id\", String(pw.response.body.data.id))\n})",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"ip\": \"2.0.0.0\",\n}"
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "create_user",
+          "method": "POST",
+          "endpoint": "<<url>>/users",
+          "params": [],
+          "headers": [
+            {
+              "key": "X-Caller",
+              "value": "<<installer_id>>",
+              "active": true,
+              "description": ""
+            },
+            {
+              "key": "X-Internal-Token",
+              "value": "<<Installer_token>>",
+              "active": true,
+              "description": ""
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "pw.test(\"status 201\", () => {\n  pw.expect(pw.response.status).toBe(201)\n  pw.env.set(\"e2e_user_id\", String(pw.response.body.data.id))\n})",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"user_name\": \"user_e2e\",\n  \"uid\": 1001,\n  \"gid\": 1001,\n  \"host_id\": <<e2e_host_id>>\n}"
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "create_rule",
+          "method": "POST",
+          "endpoint": "<<url>>/rules",
+          "params": [],
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer <<jwt>>",
+              "active": true,
+              "description": ""
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "pw.test(\"status 201\", () => {\n  pw.expect(pw.response.status).toBe(201)\n    pw.env.set(\"e2e_rule_id\", String(pw.response.body.data.id))\n})",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"rule_name\": \"e2e\",\n  \"conditions\": [],\n  \"effect\": true\n}"
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "create_policy",
+          "method": "POST",
+          "endpoint": "<<url>>/policies",
+          "params": [],
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer <<jwt>>",
+              "active": true,
+              "description": ""
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "pw.test(\"status 201\", () => {\n  pw.expect(pw.response.status).toBe(201)\n   pw.env.set(\"e2e_policy_id\", String(pw.response.body.data.id))\n})",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"policy_name\": \"e2e\",\n  \"user_id\": <<e2e_user_id>>,\n  \"status\": true\n}"
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "create_service",
+          "method": "POST",
+          "endpoint": "<<url>>/services",
+          "params": [],
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer <<jwt>>",
+              "active": true,
+              "description": ""
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "pw.test(\"status 201\", () => {\n  pw.expect(pw.response.status).toBe(201)\n   pw.env.set(\"e2e_service_id\", String(pw.response.body.data.id))\n})",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"service_name\": \"e2e\",\n}"
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "create_policy_contents",
+          "method": "POST",
+          "endpoint": "<<url>>/policy-contents",
+          "params": [],
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer <<jwt>>",
+              "active": true,
+              "description": ""
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "pw.test(\"status 201\", () => {\n  pw.expect(pw.response.status).toBe(201)\n})\n\npw.test(\"data is null\", () => {\n  pw.expect(pw.response.body.data).toBe(null)\n})",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"service_id\": <<e2e_service_id>>,\n  \"policy_id\": <<e2e_policy_id>>,\n  \"rule_id\": <<e2e_rule_id>>\n}"
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "call_pdp",
+          "method": "POST",
+          "endpoint": "<<pdp>>/decide",
+          "params": [],
+          "headers": [
+            {
+              "key": "X-Internal-Token",
+              "value": "<<decision_token>>",
+              "active": true,
+              "description": ""
+            },
+            {
+              "key": "X-Caller",
+              "value": "<<decision_id>>",
+              "active": true,
+              "description": ""
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "pw.test(\"result exists\", () => {\n    pw.expect(pw.response.body.result).toBe(\"ALLOW\")\n})\n\npw.test(\"decision exists\", () => {\n    pw.expect(pw.response.body.journal.decision_id).toBeType(\"number\")\n    pw.env.set(\"e2e_decision_id\", String(pw.response.body.journal.decision_id))\n})\n\npw.test(\"request exists\", () => {\n    pw.expect(pw.response.body.journal.request_id).toBeType(\"number\")\n    pw.env.set(\"e2e_request_id\", String(pw.response.body.journal.request_id))\n})",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"user\": {\n    \"username\": \"user_e2e\",\n    \"uid\": 1001,\n    \"gid\": 1001,\n    \"groups\": [\"test\"]\n  },\n  \"host\": {\n    \"ip\": \"2.0.0.0\",\n    \"hostname\": \"test-1\"\n  },\n  \"service\": \"e2e\",\n  \"time\": {\n    \"timestamp\": \"2026-04-16T17:28:05Z\",\n    \"weekday\": \"monday\"\n  }\n}"
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "check_request",
+          "method": "POST",
+          "endpoint": "<<url>>/requests/search",
+          "params": [
+            {
+              "key": "limit",
+              "value": "1",
+              "active": true,
+              "description": ""
+            },
+            {
+              "key": "offset",
+              "value": "0",
+              "active": true,
+              "description": ""
+            }
+          ],
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer <<jwt>>",
+              "active": true,
+              "description": ""
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "pw.test(\"check user_id\", () => {\n    pw.expect(pw.response.body.data.requests[0].user_id).toBe(Number(pw.env.get(\"e2e_user_id\")))\n})\n\npw.test(\"check request_id\", () => {\n    pw.expect(pw.response.body.data.requests[0].request_id).not.toBe(undefined)\n    pw.env.set(\"e2e_request_id\", String(pw.response.body.data.requests[0].request_id))\n})",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"user_id\": <<e2e_user_id>>\n}"
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "check_decision",
+          "method": "POST",
+          "endpoint": "<<url>>/decisions/search",
+          "params": [
+            {
+              "key": "limit",
+              "value": "1",
+              "active": true,
+              "description": ""
+            },
+            {
+              "key": "offset",
+              "value": "0",
+              "active": true,
+              "description": ""
+            }
+          ],
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer <<jwt>>",
+              "active": true,
+              "description": ""
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "pw.test(\"check request_id\", () => {\n    pw.expect(pw.response.body.data.decisions[0].request_id).toBe(Number(pw.env.get(\"e2e_request_id\")))\n})\n\npw.test(\"check policy_id\", () => {\n    pw.expect(pw.response.body.data.decisions[0].policy_id).toBe(Number(pw.env.get(\"e2e_policy_id\")))\n})\n\npw.test(\"check result\", () => {\n    pw.expect(pw.response.body.data.decisions[0].result).toBe(true)\n})\n\npw.test(\"check decision_id\", () => {\n    pw.expect(pw.response.body.data.decisions[0].decision_id).not.toBe(undefined)\n    pw.env.set(\"e2e_decision_id\", String(pw.response.body.data.decisions[0].decision_id))\n})",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"request_id\": <<e2e_request_id>>,\n  \"policy_id\": <<e2e_policy_id>>,\n  \"result\": true\n}"
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "delete_policy_contents",
+          "method": "DELETE",
+          "endpoint": "<<url>>/policy-contents/<<e2e_policy_id>>/<<e2e_service_id>>",
+          "params": [],
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer <<jwt>>",
+              "active": true,
+              "description": ""
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "pw.test(\"status 200\", () => {\n    pw.expect(pw.response.status).toBe(200)\n})",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": null,
+            "body": null
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "delete_policy",
+          "method": "DELETE",
+          "endpoint": "<<url>>/policies/<<e2e_policy_id>>",
+          "params": [],
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer <<jwt>>",
+              "active": true,
+              "description": ""
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "pw.test(\"status 200\", () => {\n    pw.expect(pw.response.status).toBe(200)\n    pw.env.set(\"e2e_policy_id\", String(0))\n})",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": null,
+            "body": null
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "delete_rule",
+          "method": "DELETE",
+          "endpoint": "<<url>>/rules/<<e2e_rule_id>>",
+          "params": [],
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer <<jwt>>",
+              "active": true,
+              "description": ""
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "pw.test(\"status 200\", () => {\n    pw.expect(pw.response.status).toBe(200)\n    pw.env.set(\"e2e_rule_id\", String(0))\n})",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": null,
+            "body": null
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "delete_service",
+          "method": "DELETE",
+          "endpoint": "<<url>>/services/<<e2e_service_id>>",
+          "params": [],
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer <<jwt>>",
+              "active": true,
+              "description": ""
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "pw.test(\"status 200\", () => {\n    pw.expect(pw.response.status).toBe(200)\n    pw.env.set(\"e2e_service_id\", String(0))\n})",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": null,
+            "body": null
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "delete_user",
+          "method": "DELETE",
+          "endpoint": "<<url>>/users/<<e2e_user_id>>",
+          "params": [],
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer <<jwt>>",
+              "active": true,
+              "description": ""
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "pw.test(\"status 200\", () => {\n    pw.expect(pw.response.status).toBe(200)\n    pw.env.set(\"e2e_user_id\", String(0))\n})",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": null,
+            "body": null
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "delete_host",
+          "method": "DELETE",
+          "endpoint": "<<url>>/hosts/<<e2e_host_id>>",
+          "params": [],
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer <<jwt>>",
+              "active": true,
+              "description": ""
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "pw.test(\"status 200\", () => {\n    pw.expect(pw.response.status).toBe(200)\n     pw.env.set(\"e2e_host_id\", String(0))\n})",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": null,
+            "body": null
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "logout",
+          "method": "POST",
+          "endpoint": "<<url>>/auth/logout",
+          "params": [],
+          "headers": [],
+          "preRequestScript": "",
+          "testScript": "pw.test(\"logout success\", () => {\n    pw.expect(pw.response.body.message).toBe(\"Выход успешно выполнен\")\n})",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"refresh_token\": \"<<refresh_token>>\"\n}"
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        }
+      ],
+      "auth": {
+        "authActive": true,
+        "authType": "inherit"
+      },
+      "headers": [],
+      "variables": [],
+      "description": null,
+      "preRequestScript": "",
+      "testScript": ""
+    },
+    {
+      "v": 12,
+      "name": "deny",
+      "folders": [],
+      "requests": [
+        {
+          "v": "17",
+          "name": "login",
+          "method": "POST",
+          "endpoint": "<<url>>/auth/login",
+          "params": [],
+          "headers": [],
+          "preRequestScript": "",
+          "testScript": "pw.test(\"access_token exists\", () => {\n    pw.expect(pw.response.body.data.access_token).toBeType(\"string\")\n    pw.env.set(\"jwt\", pw.response.body.data.access_token)\n})\n\npw.test(\"refresh_token exists\", () => {\n    pw.expect(pw.response.body.data.refresh_token).toBeType(\"string\")\n    pw.env.set(\"refresh_token\", pw.response.body.data.refresh_token)\n})",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"username\": \"admin\",\n  \"password\": \"admin\"\n}"
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "create_host",
+          "method": "POST",
+          "endpoint": "<<url>>/hosts",
+          "params": [],
+          "headers": [
+            {
+              "key": "X-Caller",
+              "value": "<<installer_id>>",
+              "active": true,
+              "description": ""
+            },
+            {
+              "key": "X-Internal-Token",
+              "value": "<<Installer_token>>",
+              "active": true,
+              "description": ""
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "pw.test(\"status 201\", () => {\n  pw.expect(pw.response.status).toBe(201)\n  pw.env.set(\"e2e_host_id\", String(pw.response.body.data.id))\n})",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"ip\": \"2.0.0.0\",\n}"
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "create_user",
+          "method": "POST",
+          "endpoint": "<<url>>/users",
+          "params": [],
+          "headers": [
+            {
+              "key": "X-Caller",
+              "value": "<<installer_id>>",
+              "active": true,
+              "description": ""
+            },
+            {
+              "key": "X-Internal-Token",
+              "value": "<<Installer_token>>",
+              "active": true,
+              "description": ""
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "pw.test(\"status 201\", () => {\n  pw.expect(pw.response.status).toBe(201)\n  pw.env.set(\"e2e_user_id\", String(pw.response.body.data.id))\n})",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"user_name\": \"user_e2e\",\n  \"uid\": 1001,\n  \"gid\": 1001,\n  \"host_id\": <<e2e_host_id>>\n}"
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "create_rule",
+          "method": "POST",
+          "endpoint": "<<url>>/rules",
+          "params": [],
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer <<jwt>>",
+              "active": true,
+              "description": ""
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "pw.test(\"status 201\", () => {\n  pw.expect(pw.response.status).toBe(201)\n    pw.env.set(\"e2e_rule_id\", String(pw.response.body.data.id))\n})",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"rule_name\": \"e2e\",\n  \"conditions\": [],\n  \"effect\": false\n}"
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "create_policy",
+          "method": "POST",
+          "endpoint": "<<url>>/policies",
+          "params": [],
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer <<jwt>>",
+              "active": true,
+              "description": ""
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "pw.test(\"status 201\", () => {\n  pw.expect(pw.response.status).toBe(201)\n   pw.env.set(\"e2e_policy_id\", String(pw.response.body.data.id))\n})",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"policy_name\": \"e2e\",\n  \"user_id\": <<e2e_user_id>>,\n  \"status\": true\n}"
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "create_service",
+          "method": "POST",
+          "endpoint": "<<url>>/services",
+          "params": [],
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer <<jwt>>",
+              "active": true,
+              "description": ""
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "pw.test(\"status 201\", () => {\n  pw.expect(pw.response.status).toBe(201)\n   pw.env.set(\"e2e_service_id\", String(pw.response.body.data.id))\n})",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"service_name\": \"e2e\",\n}"
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "create_policy_contents",
+          "method": "POST",
+          "endpoint": "<<url>>/policy-contents",
+          "params": [],
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer <<jwt>>",
+              "active": true,
+              "description": ""
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "pw.test(\"status 201\", () => {\n  pw.expect(pw.response.status).toBe(201)\n})\n\npw.test(\"data is null\", () => {\n  pw.expect(pw.response.body.data).toBe(null)\n})",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"service_id\": <<e2e_service_id>>,\n  \"policy_id\": <<e2e_policy_id>>,\n  \"rule_id\": <<e2e_rule_id>>\n}"
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "call_pdp",
+          "method": "POST",
+          "endpoint": "<<pdp>>/decide",
+          "params": [],
+          "headers": [
+            {
+              "key": "X-Internal-Token",
+              "value": "<<decision_token>>",
+              "active": true,
+              "description": ""
+            },
+            {
+              "key": "X-Caller",
+              "value": "<<decision_id>>",
+              "active": true,
+              "description": ""
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "pw.test(\"result exists\", () => {\n    pw.expect(pw.response.body.result).toBe(\"DENY\")\n})\n\npw.test(\"decision exists\", () => {\n    pw.expect(pw.response.body.journal.decision_id).toBeType(\"number\")\n    pw.env.set(\"e2e_decision_id\", String(pw.response.body.journal.decision_id))\n})\n\npw.test(\"request exists\", () => {\n    pw.expect(pw.response.body.journal.request_id).toBeType(\"number\")\n    pw.env.set(\"e2e_request_id\", String(pw.response.body.journal.request_id))\n})",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"user\": {\n    \"username\": \"user_e2e\",\n    \"uid\": 1001,\n    \"gid\": 1001,\n    \"groups\": [\"test\"]\n  },\n  \"host\": {\n    \"ip\": \"2.0.0.0\",\n    \"hostname\": \"test-1\"\n  },\n  \"service\": \"e2e\",\n  \"time\": {\n    \"timestamp\": \"2026-04-16T17:28:05Z\",\n    \"weekday\": \"monday\"\n  }\n}"
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "check_request",
+          "method": "POST",
+          "endpoint": "<<url>>/requests/search",
+          "params": [
+            {
+              "key": "limit",
+              "value": "1",
+              "active": true,
+              "description": ""
+            },
+            {
+              "key": "offset",
+              "value": "0",
+              "active": true,
+              "description": ""
+            }
+          ],
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer <<jwt>>",
+              "active": true,
+              "description": ""
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "pw.test(\"check user_id\", () => {\n    pw.expect(pw.response.body.data.requests[0].user_id).toBe(Number(pw.env.get(\"e2e_user_id\")))\n})\n\npw.test(\"check request_id\", () => {\n    pw.expect(pw.response.body.data.requests[0].request_id).not.toBe(undefined)\n    pw.env.set(\"e2e_request_id\", String(pw.response.body.data.requests[0].request_id))\n})",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"user_id\": <<e2e_user_id>>\n}"
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "check_decision",
+          "method": "POST",
+          "endpoint": "<<url>>/decisions/search",
+          "params": [
+            {
+              "key": "limit",
+              "value": "1",
+              "active": true,
+              "description": ""
+            },
+            {
+              "key": "offset",
+              "value": "0",
+              "active": true,
+              "description": ""
+            }
+          ],
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer <<jwt>>",
+              "active": true,
+              "description": ""
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "pw.test(\"check request_id\", () => {\n    pw.expect(pw.response.body.data.decisions[0].request_id).toBe(Number(pw.env.get(\"e2e_request_id\")))\n})\n\npw.test(\"check policy_id\", () => {\n    pw.expect(pw.response.body.data.decisions[0].policy_id).toBe(Number(pw.env.get(\"e2e_policy_id\")))\n})\n\npw.test(\"check result\", () => {\n    pw.expect(pw.response.body.data.decisions[0].result).toBe(false)\n})\n\npw.test(\"check decision_id\", () => {\n    pw.expect(pw.response.body.data.decisions[0].decision_id).not.toBe(undefined)\n    pw.env.set(\"e2e_decision_id\", String(pw.response.body.data.decisions[0].decision_id))\n})",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"request_id\": <<e2e_request_id>>,\n  \"policy_id\": <<e2e_policy_id>>,\n  \"result\": false\n}"
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "delete_policy_contents",
+          "method": "DELETE",
+          "endpoint": "<<url>>/policy-contents/<<e2e_policy_id>>/<<e2e_service_id>>",
+          "params": [],
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer <<jwt>>",
+              "active": true,
+              "description": ""
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "pw.test(\"status 200\", () => {\n    pw.expect(pw.response.status).toBe(200)\n})",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": null,
+            "body": null
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "delete_policy",
+          "method": "DELETE",
+          "endpoint": "<<url>>/policies/<<e2e_policy_id>>",
+          "params": [],
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer <<jwt>>",
+              "active": true,
+              "description": ""
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "pw.test(\"status 200\", () => {\n    pw.expect(pw.response.status).toBe(200)\n    pw.env.set(\"e2e_policy_id\", String(0))\n})",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": null,
+            "body": null
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "delete_rule",
+          "method": "DELETE",
+          "endpoint": "<<url>>/rules/<<e2e_rule_id>>",
+          "params": [],
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer <<jwt>>",
+              "active": true,
+              "description": ""
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "pw.test(\"status 200\", () => {\n    pw.expect(pw.response.status).toBe(200)\n    pw.env.set(\"e2e_rule_id\", String(0))\n})",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": null,
+            "body": null
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "delete_service",
+          "method": "DELETE",
+          "endpoint": "<<url>>/services/<<e2e_service_id>>",
+          "params": [],
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer <<jwt>>",
+              "active": true,
+              "description": ""
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "pw.test(\"status 200\", () => {\n    pw.expect(pw.response.status).toBe(200)\n    pw.env.set(\"e2e_service_id\", String(0))\n})",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": null,
+            "body": null
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "delete_user",
+          "method": "DELETE",
+          "endpoint": "<<url>>/users/<<e2e_user_id>>",
+          "params": [],
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer <<jwt>>",
+              "active": true,
+              "description": ""
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "pw.test(\"status 200\", () => {\n    pw.expect(pw.response.status).toBe(200)\n    pw.env.set(\"e2e_user_id\", String(0))\n})",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": null,
+            "body": null
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "delete_host",
+          "method": "DELETE",
+          "endpoint": "<<url>>/hosts/<<e2e_host_id>>",
+          "params": [],
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer <<jwt>>",
+              "active": true,
+              "description": ""
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "pw.test(\"status 200\", () => {\n    pw.expect(pw.response.status).toBe(200)\n     pw.env.set(\"e2e_host_id\", String(0))\n})",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": null,
+            "body": null
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "logout",
+          "method": "POST",
+          "endpoint": "<<url>>/auth/logout",
+          "params": [],
+          "headers": [],
+          "preRequestScript": "",
+          "testScript": "pw.test(\"logout success\", () => {\n    pw.expect(pw.response.body.message).toBe(\"Выход успешно выполнен\")\n})",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"refresh_token\": \"<<refresh_token>>\"\n}"
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        }
+      ],
+      "auth": {
+        "authActive": true,
+        "authType": "inherit"
+      },
+      "headers": [],
+      "variables": [],
+      "description": null,
+      "preRequestScript": "",
+      "testScript": ""
+    }
+  ],
+  "requests": [],
+  "auth": {
+    "authActive": true,
+    "authType": "inherit"
+  },
+  "headers": [],
+  "variables": [],
+  "description": "1. create user\n2. create host\n3. create action\n4. create service\n5. create rule (effect = allow/deny)\n6. create policy\n7. request to PDP\n8. check:\n   - result = true\n   - request is created\n   - decision is created",
+  "preRequestScript": "",
+  "testScript": ""
+}

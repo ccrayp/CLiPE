@@ -1,0 +1,1866 @@
+{
+  "v": 12,
+  "name": "api",
+  "folders": [
+    {
+      "v": 12,
+      "name": "auth",
+      "folders": [],
+      "requests": [
+        {
+          "v": "17",
+          "name": "login",
+          "method": "POST",
+          "endpoint": "<<url>>/auth/login",
+          "params": [],
+          "headers": [],
+          "preRequestScript": "",
+          "testScript": "pw.test(\"access_token exists\", () => {\n    pw.expect(pw.response.body.data.access_token).toBeType(\"string\")\n})\n\npw.test(\"refresh_token exists\", () => {\n    pw.expect(pw.response.body.data.refresh_token).toBeType(\"string\")\n    pw.env.set(\"refresh_token\", pw.response.body.data.refresh_token)\n})",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"username\": \"admin\",\n  \"password\": \"admin\"\n}"
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "refresh",
+          "method": "POST",
+          "endpoint": "<<url>>/auth/refresh",
+          "params": [],
+          "headers": [],
+          "preRequestScript": "",
+          "testScript": "pw.test(\"access_token exists\", () => {\n    pw.expect(pw.response.body.data.access_token).toBeType(\"string\")\n    pw.env.set(\"access_token\", pw.response.body.data.access_token)\n})\n\npw.test(\"refresh_token exists\", () => {\n    pw.expect(pw.response.body.data.refresh_token).toBeType(\"string\")\n    pw.env.set(\"refresh_token\", pw.response.body.data.refresh_token)\n})",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"refresh_token\": \"<<refresh_token>>\"\n}"
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "logout",
+          "method": "POST",
+          "endpoint": "<<url>>/auth/logout",
+          "params": [],
+          "headers": [],
+          "preRequestScript": "",
+          "testScript": "pw.test(\"logout success\", () => {\n    pw.expect(pw.response.body.message).toBe(\"Выход успешно выполнен\")\n})",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"refresh_token\": \"<<refresh_token>>\"\n}"
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "hash",
+          "method": "GET",
+          "endpoint": "<<url>>/auth/hash?password=testik",
+          "params": [],
+          "headers": [],
+          "preRequestScript": "",
+          "testScript": "pw.test(\"password_hash exists\", () => {\n    pw.expect(pw.response.body.data.password_hash).not.toBe(null)\n})",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": null,
+            "body": null
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        }
+      ],
+      "auth": {
+        "authActive": true,
+        "authType": "inherit"
+      },
+      "headers": [],
+      "variables": [],
+      "description": null,
+      "preRequestScript": "",
+      "testScript": ""
+    },
+    {
+      "v": 12,
+      "name": "decision",
+      "folders": [],
+      "requests": [
+        {
+          "v": "17",
+          "name": "login",
+          "method": "POST",
+          "endpoint": "<<url>>/auth/login",
+          "params": [],
+          "headers": [],
+          "preRequestScript": "",
+          "testScript": "pw.test(\"access_token exists\", () => {\n    pw.expect(pw.response.body.data.access_token).toBeType(\"string\")\n    pw.env.set(\"jwt\", pw.response.body.data.access_token)\n})\n\npw.test(\"refresh_token exists\", () => {\n    pw.expect(pw.response.body.data.refresh_token).toBeType(\"string\")\n    pw.env.set(\"refresh_token\", pw.response.body.data.refresh_token)\n})",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"username\": \"admin\",\n  \"password\": \"admin\"\n}"
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "init",
+          "method": "GET",
+          "endpoint": "<<url>>",
+          "params": [],
+          "headers": [],
+          "preRequestScript": "pw.env.set(\"decision_test_run_number\", String(parseInt(pw.env.get(\"decision_test_run_number\")) + 1))\n",
+          "testScript": "",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": null,
+            "body": null
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "filter",
+          "method": "POST",
+          "endpoint": "<<url>>/decisions/search",
+          "params": [
+            {
+              "key": "limit",
+              "value": "1",
+              "active": true,
+              "description": ""
+            },
+            {
+              "key": "offset",
+              "value": "0",
+              "active": true,
+              "description": ""
+            }
+          ],
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "",
+              "active": true,
+              "description": ""
+            },
+            {
+              "key": "Authorization",
+              "value": "Bearer <<jwt>>",
+              "active": true,
+              "description": ""
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "pw.test(\"status code 2xx\", () => {\n    pw.expect(pw.response.status).toBeLevel2xx()\n})\n\npw.test(\"data exists\", () => {\n    pw.expect(pw.response.body.data).not.toBe(undefined)\n})\n\npw.test(\"one entity in response\", () => {\n    pw.expect(pw.response.body.data.decisions.length).toBe(1)\n})",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n}"
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "create",
+          "method": "POST",
+          "endpoint": "<<url>>/decisions",
+          "params": [],
+          "headers": [
+            {
+              "key": "X-Internal-Token",
+              "value": "<<decision_token>>",
+              "active": true,
+              "description": ""
+            },
+            {
+              "key": "X-Caller",
+              "value": "<<decision_id>>",
+              "active": true,
+              "description": ""
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "pw.test(\"status code is 2xx\", () => {\n    pw.expect(pw.response.status).toBeLevel2xx()\n})\n\npw.test(\"fiels 'id' exists in response data\", () => {\n    pw.expect(pw.response.body.data.id).not.toBeType(\"undefined\")\n    pw.env.set(\"id\", String(pw.response.body.data.id))\n})",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"request_id\": 265,\n  \"policy_id\": null,\n  \"result\": true\n}"
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "logout",
+          "method": "POST",
+          "endpoint": "<<url>>/auth/logout",
+          "params": [],
+          "headers": [],
+          "preRequestScript": "",
+          "testScript": "pw.test(\"logout success\", () => {\n    pw.expect(pw.response.body.message).toBe(\"Выход успешно выполнен\")\n})",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"refresh_token\": \"<<refresh_token>>\"\n}"
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        }
+      ],
+      "auth": {
+        "authActive": true,
+        "authType": "inherit"
+      },
+      "headers": [],
+      "variables": [],
+      "description": null,
+      "preRequestScript": "",
+      "testScript": ""
+    },
+    {
+      "v": 12,
+      "name": "host",
+      "folders": [],
+      "requests": [
+        {
+          "v": "17",
+          "name": "login",
+          "method": "POST",
+          "endpoint": "<<url>>/auth/login",
+          "params": [],
+          "headers": [],
+          "preRequestScript": "",
+          "testScript": "pw.test(\"access_token exists\", () => {\n    pw.expect(pw.response.body.data.access_token).toBeType(\"string\")\n    pw.env.set(\"jwt\", pw.response.body.data.access_token)\n})\n\npw.test(\"refresh_token exists\", () => {\n    pw.expect(pw.response.body.data.refresh_token).toBeType(\"string\")\n    pw.env.set(\"refresh_token\", pw.response.body.data.refresh_token)\n})",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"username\": \"admin\",\n  \"password\": \"admin\"\n}"
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "init",
+          "method": "GET",
+          "endpoint": "<<url>>",
+          "params": [],
+          "headers": [],
+          "preRequestScript": "pw.env.set(\"host_test_run_number\", String(parseInt(pw.env.get(\"host_test_run_number\")) + 1))\n",
+          "testScript": "",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": null,
+            "body": null
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "filter",
+          "method": "POST",
+          "endpoint": "<<url>>/hosts/search",
+          "params": [
+            {
+              "key": "limit",
+              "value": "1000",
+              "active": true,
+              "description": ""
+            },
+            {
+              "key": "offset",
+              "value": "0",
+              "active": true,
+              "description": ""
+            }
+          ],
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer <<jwt>>",
+              "active": true,
+              "description": ""
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "pw.test(\"status code 2xx\", () => {\n    pw.expect(pw.response.status).toBeLevel2xx()\n})\n\npw.test(\"data exists\", () => {\n    pw.expect(pw.response.body.data).not.toBe(undefined)\n})\n\npw.test(\"one entity in response\", () => {\n    pw.expect(pw.response.body.data.hosts.length).toBe(1)\n})",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"host_id\": 1\n}"
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "create",
+          "method": "POST",
+          "endpoint": "<<url>>/hosts",
+          "params": [],
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer <<jwt>>",
+              "active": true,
+              "description": ""
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "pw.test(\"status code is 2xx\", () => {\n    pw.expect(pw.response.status).toBeLevel2xx()\n})\n\npw.test(\"fiels 'id' exists in response data\", () => {\n    pw.expect(pw.response.body.data.id).not.toBeType(\"undefined\")\n    pw.env.set(\"id\", String(pw.response.body.data.id))\n})",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"ip\": \"0.0.0.0\",\n}"
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "update",
+          "method": "PUT",
+          "endpoint": "<<url>>/hosts/<<id>>",
+          "params": [],
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer <<jwt>>",
+              "active": true,
+              "description": ""
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "pw.test(\"success\", () => {\n    pw.expect(pw.response.status).toBeLevel2xx()\n})",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"ip\": \"10.10.10.10\",\n}"
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "get_updated",
+          "method": "POST",
+          "endpoint": "<<url>>/hosts/search",
+          "params": [
+            {
+              "key": "limit",
+              "value": "1",
+              "active": true,
+              "description": ""
+            },
+            {
+              "key": "offset",
+              "value": "0",
+              "active": true,
+              "description": ""
+            }
+          ],
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer <<jwt>>",
+              "active": true,
+              "description": ""
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "pw.test(\"check new\", () => {\n    pw.expect(pw.response.body.data.hosts[0].ip).toBe(\"10.10.10.10\")\n})",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"host_id\": <<id>>\n}"
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "delete",
+          "method": "DELETE",
+          "endpoint": "<<url>>/hosts/<<id>>",
+          "params": [],
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer <<jwt>>",
+              "active": true,
+              "description": ""
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "pw.test(\"status code 2xx\", () => { \n    pw.expect(pw.response.status).toBeLevel2xx()\n})",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": null,
+            "body": null
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "get_deleted",
+          "method": "POST",
+          "endpoint": "<<url>>/hosts/search",
+          "params": [
+            {
+              "key": "limit",
+              "value": "1",
+              "active": true,
+              "description": ""
+            },
+            {
+              "key": "offset",
+              "value": "0",
+              "active": true,
+              "description": ""
+            }
+          ],
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer <<jwt>>",
+              "active": true,
+              "description": ""
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "pw.test(\"check deleted\", () => {\n    pw.expect(pw.response.body.data.hosts.length).toBe(0)\n})\n\npw.env.set(\"id\", String(0))",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"host_id\": <<id>>\n}"
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "logout",
+          "method": "POST",
+          "endpoint": "<<url>>/auth/logout",
+          "params": [],
+          "headers": [],
+          "preRequestScript": "",
+          "testScript": "pw.test(\"logout success\", () => {\n    pw.expect(pw.response.body.message).toBe(\"Выход успешно выполнен\")\n})",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"refresh_token\": \"<<refresh_token>>\"\n}"
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        }
+      ],
+      "auth": {
+        "authActive": true,
+        "authType": "inherit"
+      },
+      "headers": [],
+      "variables": [],
+      "description": null,
+      "preRequestScript": "",
+      "testScript": ""
+    },
+    {
+      "v": 12,
+      "name": "policy",
+      "folders": [],
+      "requests": [
+        {
+          "v": "17",
+          "name": "login",
+          "method": "POST",
+          "endpoint": "<<url>>/auth/login",
+          "params": [],
+          "headers": [],
+          "preRequestScript": "",
+          "testScript": "pw.test(\"access_token exists\", () => {\n    pw.expect(pw.response.body.data.access_token).toBeType(\"string\")\n    pw.env.set(\"jwt\", pw.response.body.data.access_token)\n})\n\npw.test(\"refresh_token exists\", () => {\n    pw.expect(pw.response.body.data.refresh_token).toBeType(\"string\")\n    pw.env.set(\"refresh_token\", pw.response.body.data.refresh_token)\n})",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"username\": \"admin\",\n  \"password\": \"admin\"\n}"
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "init",
+          "method": "GET",
+          "endpoint": "<<url>>",
+          "params": [],
+          "headers": [],
+          "preRequestScript": "pw.env.set(\"policy_test_run_number\", String(parseInt(pw.env.get(\"policy_test_run_number\")) + 1))\n",
+          "testScript": "",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": null,
+            "body": null
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "filter",
+          "method": "POST",
+          "endpoint": "<<url>>/policies/search",
+          "params": [
+            {
+              "key": "limit",
+              "value": "1",
+              "active": true,
+              "description": ""
+            },
+            {
+              "key": "offset",
+              "value": "0",
+              "active": true,
+              "description": ""
+            }
+          ],
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer <<jwt>>",
+              "active": true,
+              "description": ""
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "pw.test(\"status code 2xx\", () => {\n    pw.expect(pw.response.status).toBeLevel2xx()\n})\n\npw.test(\"data exists\", () => {\n    pw.expect(pw.response.body.data).not.toBe(undefined)\n})\n\npw.test(\"one entity in response\", () => {\n    pw.expect(pw.response.body.data.policies.length).toBe(1)\n})",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n}"
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "create",
+          "method": "POST",
+          "endpoint": "<<url>>/policies",
+          "params": [],
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer <<jwt>>",
+              "active": true,
+              "description": ""
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "pw.test(\"status code is 2xx\", () => {\n    pw.expect(pw.response.status).toBeLevel2xx()\n})\n\npw.test(\"fiels 'id' exists in response data\", () => {\n    pw.expect(pw.response.body.data.id).not.toBeType(\"undefined\")\n    pw.env.set(\"id\", String(pw.response.body.data.id))\n})",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"policy_name\": \"test_<<policy_test_run_number>>\",\n  \"user_id\": 206,\n  \"status\": false\n}"
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "update",
+          "method": "PUT",
+          "endpoint": "<<url>>/policies/<<id>>",
+          "params": [],
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer <<jwt>>",
+              "active": true,
+              "description": ""
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "pw.test(\"success update\", () => { \n    pw.expect(pw.response.status).toBeLevel2xx()\n})",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"policy_name\": \"test_<<id>>\",\n  \"user_id\": 206,\n  \"status\": false\n}"
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "get_updated",
+          "method": "POST",
+          "endpoint": "<<url>>/policies/search",
+          "params": [
+            {
+              "key": "limit",
+              "value": "1",
+              "active": true,
+              "description": ""
+            },
+            {
+              "key": "offset",
+              "value": "0",
+              "active": true,
+              "description": ""
+            }
+          ],
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer <<jwt>>",
+              "active": true,
+              "description": ""
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "pw.test(\"check new\", () => {\n    pw.expect(pw.response.body.data.policies[0].policy_name).toBe(\"test_\" + pw.env.get(\"id\"))\n})",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"policy_name\": \"test_<<id>>\"\n}"
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "delete",
+          "method": "DELETE",
+          "endpoint": "<<url>>/policies/<<id>>",
+          "params": [],
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer <<jwt>>",
+              "active": true,
+              "description": ""
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "pw.test(\"status code 2xx\", () => { \n    pw.expect(pw.response.status).toBeLevel2xx()\n})",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": null,
+            "body": null
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "get_deleted",
+          "method": "POST",
+          "endpoint": "<<url>>/policies/search",
+          "params": [
+            {
+              "key": "limit",
+              "value": "1",
+              "active": true,
+              "description": ""
+            },
+            {
+              "key": "offset",
+              "value": "0",
+              "active": true,
+              "description": ""
+            }
+          ],
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer <<jwt>>",
+              "active": true,
+              "description": ""
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "pw.test(\"check deleted\", () => {\n    pw.expect(pw.response.body.data.policies.length).toBe(0)\n})\n\npw.env.set(\"id\", String(0))",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"policy_name\": \"test_<<id>>\"\n}"
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "logout",
+          "method": "POST",
+          "endpoint": "<<url>>/auth/logout",
+          "params": [],
+          "headers": [],
+          "preRequestScript": "",
+          "testScript": "pw.test(\"logout success\", () => {\n    pw.expect(pw.response.body.message).toBe(\"Выход успешно выполнен\")\n})",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"refresh_token\": \"<<refresh_token>>\"\n}"
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        }
+      ],
+      "auth": {
+        "authType": "inherit",
+        "authActive": true
+      },
+      "headers": [],
+      "variables": [],
+      "description": null,
+      "preRequestScript": "",
+      "testScript": ""
+    },
+    {
+      "v": 12,
+      "name": "request",
+      "folders": [],
+      "requests": [
+        {
+          "v": "17",
+          "name": "login",
+          "method": "POST",
+          "endpoint": "<<url>>/auth/login",
+          "params": [],
+          "headers": [],
+          "preRequestScript": "",
+          "testScript": "pw.test(\"access_token exists\", () => {\n    pw.expect(pw.response.body.data.access_token).toBeType(\"string\")\n    pw.env.set(\"jwt\", pw.response.body.data.access_token)\n})\n\npw.test(\"refresh_token exists\", () => {\n    pw.expect(pw.response.body.data.refresh_token).toBeType(\"string\")\n    pw.env.set(\"refresh_token\", pw.response.body.data.refresh_token)\n})",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"username\": \"admin\",\n  \"password\": \"admin\"\n}"
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "init",
+          "method": "GET",
+          "endpoint": "<<url>>",
+          "params": [],
+          "headers": [],
+          "preRequestScript": "pw.env.set(\"request_test_run_number\", String(parseInt(pw.env.get(\"request_test_run_number\")) + 1))\n",
+          "testScript": "",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": null,
+            "body": null
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "filter",
+          "method": "POST",
+          "endpoint": "<<url>>/requests/search",
+          "params": [
+            {
+              "key": "limit",
+              "value": "1",
+              "active": true,
+              "description": ""
+            },
+            {
+              "key": "offset",
+              "value": "0",
+              "active": true,
+              "description": ""
+            }
+          ],
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer <<jwt>>",
+              "active": true,
+              "description": ""
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "pw.test(\"status code 2xx\", () => {\n    pw.expect(pw.response.status).toBeLevel2xx()\n})\n\npw.test(\"data exists\", () => {\n    pw.expect(pw.response.body.data).not.toBe(undefined)\n})\n\npw.test(\"one entity in response\", () => {\n    pw.expect(pw.response.body.data.requests.length).toBe(1)\n})",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n}"
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "create",
+          "method": "POST",
+          "endpoint": "<<url>>/requests",
+          "params": [],
+          "headers": [
+            {
+              "key": "X-Caller",
+              "value": "<<decision_id>>",
+              "active": true,
+              "description": ""
+            },
+            {
+              "key": "X-Internal-Token",
+              "value": "<<decision_token>>",
+              "active": true,
+              "description": ""
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "pw.test(\"status code is 2xx\", () => {\n    pw.expect(pw.response.status).toBeLevel2xx()\n})\n\npw.test(\"fiels 'id' exists in response data\", () => {\n    pw.expect(pw.response.body.data.id).not.toBeType(\"undefined\")\n    pw.env.set(\"id\", String(pw.response.body.data.id))\n})",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"user_id\": 206,\n  \"context\": {\"name\": \"test_<<request_test_run_number>>\"}\n}"
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "logout",
+          "method": "POST",
+          "endpoint": "<<url>>/auth/logout",
+          "params": [],
+          "headers": [],
+          "preRequestScript": "",
+          "testScript": "pw.test(\"logout success\", () => {\n    pw.expect(pw.response.body.message).toBe(\"Выход успешно выполнен\")\n})",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"refresh_token\": \"<<refresh_token>>\"\n}"
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        }
+      ],
+      "auth": {
+        "authActive": true,
+        "authType": "inherit"
+      },
+      "headers": [],
+      "variables": [],
+      "description": null,
+      "preRequestScript": "",
+      "testScript": ""
+    },
+    {
+      "v": 12,
+      "name": "rule",
+      "folders": [],
+      "requests": [
+        {
+          "v": "17",
+          "name": "login",
+          "method": "POST",
+          "endpoint": "<<url>>/auth/login",
+          "params": [],
+          "headers": [],
+          "preRequestScript": "",
+          "testScript": "pw.test(\"access_token exists\", () => {\n    pw.expect(pw.response.body.data.access_token).toBeType(\"string\")\n    pw.env.set(\"jwt\", pw.response.body.data.access_token)\n})\n\npw.test(\"refresh_token exists\", () => {\n    pw.expect(pw.response.body.data.refresh_token).toBeType(\"string\")\n    pw.env.set(\"refresh_token\", pw.response.body.data.refresh_token)\n})",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"username\": \"admin\",\n  \"password\": \"admin\"\n}"
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "init",
+          "method": "GET",
+          "endpoint": "<<url>>",
+          "params": [],
+          "headers": [],
+          "preRequestScript": "pw.env.set(\"rule_test_run_number\", String(parseInt(pw.env.get(\"rule_test_run_number\")) + 1))\n",
+          "testScript": "",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": null,
+            "body": null
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "filter",
+          "method": "POST",
+          "endpoint": "<<url>>/rules/search",
+          "params": [
+            {
+              "key": "limit",
+              "value": "1",
+              "active": true,
+              "description": ""
+            },
+            {
+              "key": "offset",
+              "value": "0",
+              "active": true,
+              "description": ""
+            }
+          ],
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer <<jwt>>",
+              "active": true,
+              "description": ""
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "pw.test(\"status code 2xx\", () => {\n    pw.expect(pw.response.status).toBeLevel2xx()\n})\n\npw.test(\"data exists\", () => {\n    pw.expect(pw.response.body.data).not.toBe(undefined)\n})\n\npw.test(\"one entity in response\", () => {\n    pw.expect(pw.response.body.data.rules.length).toBe(1)\n})",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"effect\": true\n}\n"
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "create",
+          "method": "POST",
+          "endpoint": "<<url>>/rules",
+          "params": [],
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer <<jwt>>",
+              "active": true,
+              "description": ""
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "pw.test(\"status code is 2xx\", () => {\n    pw.expect(pw.response.status).toBeLevel2xx()\n})\n\npw.test(\"fiels 'id' exists in response data\", () => {\n    pw.expect(pw.response.body.data.id).not.toBeType(\"undefined\")\n    pw.env.set(\"id\", String(pw.response.body.data.id))\n})",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"rule_name\": \"test_<<id>>\",\n  \"conditions\": [\n    {\"type\": \"timestamp\", \"operator\": \"between\", \"value\": \"09:00-18:00\"}\n  ],\n  \"effect\": true\n}"
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "update",
+          "method": "PUT",
+          "endpoint": "<<url>>/rules/<<id>>",
+          "params": [],
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer <<jwt>>",
+              "active": true,
+              "description": ""
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "pw.test(\"success update\", () => {\n    pw.expect(pw.response.status).toBeLevel2xx()\n})",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"rule_name\": \"test_<<rule_test_run_number>>\",\n  \"effect\": true\n}"
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "get_updated",
+          "method": "POST",
+          "endpoint": "<<url>>/rules/search",
+          "params": [
+            {
+              "key": "limit",
+              "value": "1",
+              "active": true,
+              "description": ""
+            },
+            {
+              "key": "offset",
+              "value": "0",
+              "active": true,
+              "description": ""
+            }
+          ],
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer <<jwt>>",
+              "active": true,
+              "description": ""
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "pw.test(\"check new\", () => {\n    pw.expect(pw.response.body.data.rules[0].effect).toBe(true)\n})",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"rule_id\": <<id>>,\n  \"effect\": true\n}"
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "delete",
+          "method": "DELETE",
+          "endpoint": "<<url>>/rules/<<id>>",
+          "params": [],
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer <<jwt>>",
+              "active": true,
+              "description": ""
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "pw.test(\"status code 2xx\", () => { \n    pw.expect(pw.response.status).toBeLevel2xx()\n})",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": null,
+            "body": null
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "get_deleted",
+          "method": "POST",
+          "endpoint": "<<url>>/rules/search",
+          "params": [
+            {
+              "key": "limit",
+              "value": "1",
+              "active": true,
+              "description": ""
+            },
+            {
+              "key": "offset",
+              "value": "0",
+              "active": true,
+              "description": ""
+            }
+          ],
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer <<jwt>>",
+              "active": true,
+              "description": ""
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "pw.test(\"check deleted\", () => {\n    pw.expect(pw.response.body.data.rules.length).toBe(0)\n})\n\npw.env.set(\"id\", String(0))",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"rule_name\": \"test_<<rule_test_run_number>>\",\n  \"effect\": true\n}"
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "logout",
+          "method": "POST",
+          "endpoint": "<<url>>/auth/logout",
+          "params": [],
+          "headers": [],
+          "preRequestScript": "",
+          "testScript": "pw.test(\"logout success\", () => {\n    pw.expect(pw.response.body.message).toBe(\"Выход успешно выполнен\")\n})",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"refresh_token\": \"<<refresh_token>>\"\n}"
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        }
+      ],
+      "auth": {
+        "authType": "inherit",
+        "authActive": true
+      },
+      "headers": [],
+      "variables": [],
+      "description": null,
+      "preRequestScript": "",
+      "testScript": ""
+    },
+    {
+      "v": 12,
+      "name": "user",
+      "folders": [],
+      "requests": [
+        {
+          "v": "17",
+          "name": "login",
+          "method": "POST",
+          "endpoint": "<<url>>/auth/login",
+          "params": [],
+          "headers": [],
+          "preRequestScript": "",
+          "testScript": "pw.test(\"access_token exists\", () => {\n    pw.expect(pw.response.body.data.access_token).toBeType(\"string\")\n    pw.env.set(\"jwt\", pw.response.body.data.access_token)\n})\n\npw.test(\"refresh_token exists\", () => {\n    pw.expect(pw.response.body.data.refresh_token).toBeType(\"string\")\n    pw.env.set(\"refresh_token\", pw.response.body.data.refresh_token)\n})",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"username\": \"admin\",\n  \"password\": \"admin\"\n}"
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "init",
+          "method": "GET",
+          "endpoint": "<<url>>",
+          "params": [],
+          "headers": [],
+          "preRequestScript": "pw.env.set(\"user_test_run_number\", String(parseInt(pw.env.get(\"user_test_run_number\")) + 1))\n",
+          "testScript": "",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": null,
+            "body": null
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "filter",
+          "method": "POST",
+          "endpoint": "<<url>>/users/search",
+          "params": [
+            {
+              "key": "limit",
+              "value": "1",
+              "active": true,
+              "description": ""
+            },
+            {
+              "key": "offset",
+              "value": "0",
+              "active": true,
+              "description": ""
+            }
+          ],
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer <<jwt>>",
+              "active": true,
+              "description": ""
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "pw.test(\"status code 2xx\", () => {\n    pw.expect(pw.response.status).toBeLevel2xx()\n})\n\npw.test(\"data exists\", () => {\n    pw.expect(pw.response.body.data).not.toBe(undefined)\n})\n\npw.test(\"one entity in response\", () => {\n    pw.expect(pw.response.body.data.users.length).toBe(1)\n})",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n}"
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "create",
+          "method": "POST",
+          "endpoint": "<<url>>/users",
+          "params": [],
+          "headers": [
+            {
+              "key": "X-Caller",
+              "value": "<<installer_id>>",
+              "active": true,
+              "description": ""
+            },
+            {
+              "key": "X-Internal-Token",
+              "value": "<<Installer_token>>",
+              "active": true,
+              "description": ""
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "pw.test(\"status code is 2xx\", () => {\n    pw.expect(pw.response.status).toBeLevel2xx()\n})\n\npw.test(\"fiels 'id' exists in response data\", () => {\n    pw.expect(pw.response.body.data.id).not.toBeType(\"undefined\")\n    pw.env.set(\"id\", String(pw.response.body.data.id))\n})",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"user_name\": \"test_<<user_test_run_number>>\",\n  \"uid\": <<user_test_run_number>>,\n  \"gid\": <<user_test_run_number>>,\n  \"host_id\": 1\n}"
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "update",
+          "method": "PUT",
+          "endpoint": "<<url>>/users/<<id>>",
+          "params": [],
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer <<jwt>>",
+              "active": true,
+              "description": ""
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "pw.test(\"success update\", () => {\n    pw.expect(pw.response.status).toBeLevel2xx()\n})",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"user_name\": \"test_<<id>>\",\n  \"uid\": <<user_test_run_number>>,\n  \"gid\": <<user_test_run_number>>,\n  \"host_id\": 1\n}"
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "get_updated",
+          "method": "POST",
+          "endpoint": "<<url>>/users/search",
+          "params": [
+            {
+              "key": "limit",
+              "value": "1",
+              "active": true,
+              "description": ""
+            },
+            {
+              "key": "offset",
+              "value": "0",
+              "active": true,
+              "description": ""
+            }
+          ],
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer <<jwt>>",
+              "active": true,
+              "description": ""
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "pw.test(\"check new\", () => {\n    pw.expect(pw.response.body.data.users[0].user_name).toBe(\"test_\" + pw.env.get(\"id\"))\n})",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"user_name\": \"test_<<id>>\"\n}"
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "delete",
+          "method": "DELETE",
+          "endpoint": "<<url>>/users/<<id>>",
+          "params": [],
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer <<jwt>>",
+              "active": true,
+              "description": ""
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "pw.test(\"status code 2xx\", () => { \n    pw.expect(pw.response.status).toBeLevel2xx()\n})",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": null,
+            "body": null
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "get_deleted",
+          "method": "POST",
+          "endpoint": "<<url>>/users/search",
+          "params": [
+            {
+              "key": "limit",
+              "value": "1",
+              "active": true,
+              "description": ""
+            },
+            {
+              "key": "offset",
+              "value": "0",
+              "active": true,
+              "description": ""
+            }
+          ],
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer <<jwt>>",
+              "active": true,
+              "description": ""
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "pw.test(\"check deleted\", () => {\n    pw.expect(pw.response.body.data.users.length).toBe(0)\n})\n\npw.env.set(\"id\", String(0))",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"user_name\": \"test_<<id>>\"\n}"
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "logout",
+          "method": "POST",
+          "endpoint": "<<url>>/auth/logout",
+          "params": [],
+          "headers": [],
+          "preRequestScript": "",
+          "testScript": "pw.test(\"logout success\", () => {\n    pw.expect(pw.response.body.message).toBe(\"Выход успешно выполнен\")\n})",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"refresh_token\": \"<<refresh_token>>\"\n}"
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        }
+      ],
+      "auth": {
+        "authActive": true,
+        "authType": "inherit"
+      },
+      "headers": [],
+      "variables": [],
+      "description": null,
+      "preRequestScript": "",
+      "testScript": ""
+    },
+    {
+      "v": 12,
+      "name": "service",
+      "folders": [],
+      "requests": [
+        {
+          "v": "17",
+          "name": "login",
+          "method": "POST",
+          "endpoint": "<<url>>/auth/login",
+          "params": [],
+          "headers": [],
+          "preRequestScript": "",
+          "testScript": "pw.test(\"access_token exists\", () => {\n    pw.expect(pw.response.body.data.access_token).toBeType(\"string\")\n    pw.env.set(\"jwt\", pw.response.body.data.access_token)\n})\n\npw.test(\"refresh_token exists\", () => {\n    pw.expect(pw.response.body.data.refresh_token).toBeType(\"string\")\n    pw.env.set(\"refresh_token\", pw.response.body.data.refresh_token)\n})",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"username\": \"admin\",\n  \"password\": \"admin\"\n}"
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "init",
+          "method": "GET",
+          "endpoint": "<<url>>",
+          "params": [],
+          "headers": [],
+          "preRequestScript": "pw.env.set(\"service_test_run_number\", String(parseInt(pw.env.get(\"service_test_run_number\")) + 1))\n",
+          "testScript": "",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": null,
+            "body": null
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "filter",
+          "method": "POST",
+          "endpoint": "<<url>>/services/search",
+          "params": [
+            {
+              "key": "limit",
+              "value": "1",
+              "active": true,
+              "description": ""
+            },
+            {
+              "key": "offset",
+              "value": "0",
+              "active": true,
+              "description": ""
+            }
+          ],
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer <<jwt>>",
+              "active": true,
+              "description": ""
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "pw.test(\"status code 2xx\", () => {\n    pw.expect(pw.response.status).toBeLevel2xx()\n})\n\npw.test(\"data exists\", () => {\n    pw.expect(pw.response.body.data).not.toBe(undefined)\n})\n\npw.test(\"one entity in response\", () => {\n    pw.expect(pw.response.body.data.services.length).toBe(1)\n})",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \n}"
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "create",
+          "method": "POST",
+          "endpoint": "<<url>>/services",
+          "params": [],
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer <<jwt>>",
+              "active": true,
+              "description": ""
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "pw.test(\"status code is 2xx\", () => {\n    pw.expect(pw.response.status).toBeLevel2xx()\n})\n\npw.test(\"fiels 'id' exists in response data\", () => {\n    pw.expect(pw.response.body.data.id).not.toBeType(\"undefined\")\n    pw.env.set(\"id\", String(pw.response.body.data.id))\n})",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"service_name\": \"test_<<service_test_run_number>>\",\n}"
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "update",
+          "method": "PUT",
+          "endpoint": "<<url>>/services/<<id>>",
+          "params": [],
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer <<jwt>>",
+              "active": true,
+              "description": ""
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "pw.test(\"success update\", () => {\n    pw.expect(pw.response.status).toBeLevel2xx()\n})",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"service_name\": \"test_<<id>>\"\n}"
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "get_updated",
+          "method": "POST",
+          "endpoint": "<<url>>/services/search",
+          "params": [
+            {
+              "key": "limit",
+              "value": "1",
+              "active": true,
+              "description": ""
+            },
+            {
+              "key": "offset",
+              "value": "0",
+              "active": true,
+              "description": ""
+            }
+          ],
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer <<jwt>>",
+              "active": true,
+              "description": ""
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "pw.test(\"check new\", () => {\n    pw.expect(pw.response.body.data.services[0].service_name).toBe(\"test_\" + pw.env.get(\"id\"))\n})",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"service_name\": \"test_<<id>>\"\n}"
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "delete",
+          "method": "DELETE",
+          "endpoint": "<<url>>/services/<<id>>",
+          "params": [],
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer <<jwt>>",
+              "active": true,
+              "description": ""
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "pw.test(\"status code 2xx\", () => { \n    pw.expect(pw.response.status).toBeLevel2xx()\n})",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": null,
+            "body": null
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "get_deleted",
+          "method": "POST",
+          "endpoint": "<<url>>/services/search",
+          "params": [
+            {
+              "key": "limit",
+              "value": "1",
+              "active": true,
+              "description": ""
+            },
+            {
+              "key": "offset",
+              "value": "0",
+              "active": true,
+              "description": ""
+            }
+          ],
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer <<jwt>>",
+              "active": true,
+              "description": ""
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "pw.test(\"check deleted\", () => {\n    pw.expect(pw.response.body.data.services.length).toBe(0)\n})\n\npw.env.set(\"id\", String(0))",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"service_name\": \"test_<<id>>\"\n}"
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "logout",
+          "method": "POST",
+          "endpoint": "<<url>>/auth/logout",
+          "params": [],
+          "headers": [],
+          "preRequestScript": "",
+          "testScript": "pw.test(\"logout success\", () => {\n    pw.expect(pw.response.body.message).toBe(\"Выход успешно выполнен\")\n})",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"refresh_token\": \"<<refresh_token>>\"\n}"
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        }
+      ],
+      "auth": {
+        "authActive": true,
+        "authType": "inherit"
+      },
+      "headers": [],
+      "variables": [],
+      "description": null,
+      "preRequestScript": "",
+      "testScript": ""
+    }
+  ],
+  "requests": [],
+  "auth": {
+    "authType": "inherit",
+    "authActive": true
+  },
+  "headers": [],
+  "variables": [],
+  "description": null,
+  "preRequestScript": "",
+  "testScript": ""
+}
