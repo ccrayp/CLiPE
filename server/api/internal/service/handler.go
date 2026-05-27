@@ -62,10 +62,10 @@ func (h *ServiceHandler) Filter(ctx *gin.Context) {
 	}
 
 	utils.RespondSuccess(ctx, http.StatusOK, nil, gin.H{
-		"services": data,
-		"limit":    limit,
-		"offset":   offset,
-		"count":    count,
+		"users":  data,
+		"limit":  limit,
+		"offset": offset,
+		"count":  count,
 	})
 }
 
