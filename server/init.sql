@@ -60,7 +60,7 @@ CREATE TABLE requests (
 
 CREATE TABLE decisions (
 	decision_id SERIAL PRIMARY KEY,
-	request_id INT NOT NULL REFERENCES requests(request_id) ON DELETE CASCADE,
+	request_id INT NOT NULL UNIQUE REFERENCES requests(request_id) ON DELETE CASCADE,
 	policy_id INT REFERENCES policies(policy_id) ON DELETE CASCADE,
 	result BOOLEAN NOT NULL,
 	timestamp TIMESTAMP NOT NULL DEFAULT NOW()
