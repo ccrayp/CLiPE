@@ -1,3 +1,4 @@
 # admin-panel
 .DS_Store
 .env
+*coverage
