@@ -12,6 +12,14 @@ import (
 	"os"
 )
 
+type DecisionClient interface {
+	GetRule(request *model.ApiRequest) (*model.PolicyMatchResponse, error)
+	CreateRequest(userID uint, request *model.ApiRequest) (uint, error)
+	CreateDecision(requestID uint, policyID uint, result bool) (uint, error)
+	CreateFallbackRequest(request *model.ApiRequest) (uint, error)
+	CreateFallbackDecision(requestID uint, result bool) (uint, error)
+}
+
 type createDecisionDTO struct {
 	RequestID uint `json:"request_id" binding:"required"`
 	PolicyID  uint `json:"policy_id" binding:"required"`

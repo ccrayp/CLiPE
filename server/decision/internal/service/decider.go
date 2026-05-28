@@ -11,11 +11,11 @@ import (
 )
 
 type Decider struct {
-	client          *client.Client
+	client          client.DecisionClient
 	defaultDecision bool
 }
 
-func NewDecider(client *client.Client, defaultDecision bool) *Decider {
+func NewDecider(client client.DecisionClient, defaultDecision bool) *Decider {
 	return &Decider{
 		client:          client,
 		defaultDecision: defaultDecision,
