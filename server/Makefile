@@ -1,5 +1,7 @@
 run:
-	docker compose up -d
+	@docker compose up -d
+	@echo ""
+	@printf "  Панель администратора: \033]8;;https://127.0.0.1\033\\\\https://clipe\033]8;;\033\\\\\n"
 
 build:
 	docker compose up --build -d
