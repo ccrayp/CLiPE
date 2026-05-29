@@ -4,7 +4,7 @@ init:
 	.venv/bin/pip install -r requirements.txt
 
 install: init
-	sudo apt install -y libpam0g-dev nlohmann-json3-dev libcurl g++
+	sudo apt install -y libpam0g-dev nlohmann-json3-dev libcurl4 g++
 	sudo cp ca.crt /usr/local/share/ca-certificates/clipe-ca.crt
 	sudo update-ca-certificates
 	.venv/bin/python scripts/install.py

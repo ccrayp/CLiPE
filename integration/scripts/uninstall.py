@@ -56,6 +56,34 @@ MESSAGES = {
     "pam_abort": {
         "ru": "Модуль используется в PAM ({files}). Удаление прервано.",
         "en": "Module is used in PAM ({files}). Uninstall aborted."
+    },
+    "cert_removed": {
+        "ru": "Сертификат удалён: {path}",
+        "en": "Certificate removed: {path}"
+    },
+    "cert_not_found": {
+        "ru": "Сертификат не найден: {path}",
+        "en": "Certificate not found: {path}"
+    },
+    "cert_store_updated": {
+        "ru": "Хранилище сертификатов обновлено",
+        "en": "Certificate store updated"
+    },
+    "cert_store_error": {
+        "ru": "Ошибка обновления хранилища сертификатов: {err}",
+        "en": "Certificate store update error: {err}"
+    },
+    "cert_remove_cmd_error": {
+        "ru": "Ошибка команды удаления сертификата: {err}",
+        "en": "Certificate removal command error: {err}"
+    },
+    "cert_remove_error": {
+        "ru": "Ошибка удаления сертификата: {err}",
+        "en": "Certificate removal error: {err}"
+    },
+    "cert_remove_warning": {
+        "ru": "Сертификат удалён не полностью",
+        "en": "Certificate was not fully removed"
     }
 }
 
@@ -135,8 +163,8 @@ def get_ip():
 
 
 def find_host(base_url, headers, ip):
-    response = requests.get(
-        f"{base_url}/hosts?limit=1&offset=0",
+    response = requests.post(
+        f"{base_url}/hosts/search?limit=1&offset=0",
         json={"ip": ip},
         timeout=5,
         verify="/usr/local/share/ca-certificates/clipe-ca.crt",
@@ -159,8 +187,8 @@ def delete_host(base_url, headers, host_id):
 
 
 def find_user(base_url, headers, user):
-    response = requests.get(
-        f"{base_url}/users?limit=1&offset=0",
+    response = requests.post(
+        f"{base_url}/users/search?limit=1&offset=0",
         json={
             "user_name": user.pw_name,
             "uid": user.pw_uid,

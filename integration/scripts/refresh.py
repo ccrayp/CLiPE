@@ -84,8 +84,8 @@ def get_ip():
 
 
 def get_host(base_url, headers, ip):
-    r = requests.get(
-        f"{base_url}/hosts",
+    r = requests.post(
+        f"{base_url}/hosts/search",
         params={"limit": 1, "offset": 0},
         json={
             "ip": ip
@@ -104,8 +104,8 @@ def get_host(base_url, headers, ip):
 
 
 def get_users(base_url, headers, host_id):
-    r = requests.get(
-        f"{base_url}/users",
+    r = requests.post(
+        f"{base_url}/users/search",
         params={"limit": 1000, "offset": 0},
         json={
             "host_id": host_id
