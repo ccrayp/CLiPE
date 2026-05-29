@@ -11,7 +11,7 @@ export const apiMap = {
   }),
   services: createCrudApi({
     basePath: '/services',
-    listKey: 'users',
+    listKey: 'services',
   }),
   rules: createCrudApi({
     basePath: '/rules',
