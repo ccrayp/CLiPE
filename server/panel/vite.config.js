@@ -11,7 +11,7 @@ export default defineConfig({
       'clipe.local',
       'localhost',
       '127.0.0.1',
-      '.clipe'
+      '.clipe',
     ],
     port: 5173,
     strictPort: false,

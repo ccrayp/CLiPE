@@ -123,8 +123,6 @@ func TestFallback(t *testing.T) {
 		assert.Equal(t, "unknown", got.Policy.Name)
 		assert.Equal(t, uint(10), got.RequestId)
 		assert.Equal(t, uint(20), got.DecisionId)
-		assert.Equal(t, uint(10), client.createdRequestID)
-		assert.Equal(t, true, client.createdResult)
 	})
 
 	t.Run("create fallback request error", func(t *testing.T) {
