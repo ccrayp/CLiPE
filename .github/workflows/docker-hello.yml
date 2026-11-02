@@ -1,0 +1,14 @@
+name: Hello World Docker
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+jobs:
+  hello-world:
+    runs-on: self-hosted
+
+    steps:
+      - name: Run Hello World container
+        run: docker run --rm hello-world
